@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"studyonline/constant"
 	"studyonline/handler/admin"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
@@ -23,15 +24,16 @@ func main() {
 		v0.POST("/teacher", login.TeacherLogin)
 		v0.POST("/admin", login.AdminLogin)
 	}
+	// 管理员导入
 	v1 := r.Group("/admin")
 	{
-		v1.POST("/import/student", admin.ImportStudent)
-		v1.POST("/import/teacher", admin.ImportTeacher)
+		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
+		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
 	}
 	// 获取资源
-	v255 := r.Group("/resource", middleware.Auth)
+	v255 := r.Group("/resource", middleware.Auth(constant.CommonIdentity))
 	{
-		v255.GET("/file", middleware.Auth, func(c *gin.Context) {
+		v255.GET("/file", middleware.Auth(constant.CommonIdentity), func(c *gin.Context) {
 			name := c.Param("name")
 			c.String(http.StatusOK, "Hello %s", name)
 		})
@@ -40,5 +42,7 @@ func main() {
 			c.String(http.StatusOK, "Hello %s", name)
 		})
 	}
-	r.Run(":8000")
+	// 上传资源
+
+	r.Run(":18000")
 }
