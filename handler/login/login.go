@@ -3,6 +3,7 @@ package login
 import (
 	"fmt"
 	"net/http"
+	"studyonline/constant"
 	"studyonline/service"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 func StudentLogin(c *gin.Context) {
 	username := c.DefaultQuery("username", "")
 	password := c.DefaultQuery("password", "")
-	success, token, err := service.Login(username, password)
+	success, token, err := service.Login(c, username, password, constant.StudentIdentity)
 	if err != nil || !success {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -28,7 +29,7 @@ func StudentLogin(c *gin.Context) {
 func TeacherLogin(c *gin.Context) {
 	username := c.DefaultQuery("username", "")
 	password := c.DefaultQuery("password", "")
-	success, token, err := service.Login(username, password)
+	success, token, err := service.Login(c, username, password, constant.TeacherIdentity)
 	if err != nil || !success {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -45,7 +46,7 @@ func TeacherLogin(c *gin.Context) {
 func AdminLogin(c *gin.Context) {
 	username := c.DefaultQuery("username", "")
 	password := c.DefaultQuery("password", "")
-	success, token, err := service.Login(username, password)
+	success, token, err := service.Login(c, username, password, constant.AdminIdentity)
 	if err != nil || !success {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

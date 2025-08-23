@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Teacher struct {
 	gorm.Model
-	Name      string `json:"name" gorm:"not null"`
-	StudentId string `json:"student_id" gorm:"unique;not null"`
-	Password  string `json:"password" gorm:"not null"`
+	Name     string `json:"name" gorm:"not null"`
+	Username string `json:"Username" gorm:"unique;not null"`
+	Password string `json:"password" gorm:"not null"`
 }

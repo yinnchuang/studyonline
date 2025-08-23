@@ -1,25 +1,54 @@
 package service
 
 import (
+	"context"
 	"errors"
-	"github.com/google/uuid"
-	"strings"
+	"fmt"
+	"time"
+
+	"studyonline/constant"
+	"studyonline/dao/entity"
+	"studyonline/dao/mysql"
+	"studyonline/dao/redis"
+	"studyonline/util"
 )
 
-func Login(username string, password string) (bool, string, error) {
-	if username == "admin" && password == "admin" {
-		token := uuid.New().String()
-		token = strings.ReplaceAll(token, "-", "")
-		return true, "token", nil
+func Login(ctx context.Context, username string, password string, identity int) (bool, string, error) {
+	var idFromDB uint
+	var passwordFromDB string
+	if identity == constant.StudentIdentity { // 学生登录
+		stu := entity.Student{}
+		err := mysql.DB.Model(&entity.Student{}).Where("username = ?", username).Find(&stu).Error
+		if err != nil {
+			return false, "", err
+		}
+		idFromDB = stu.ID
+		passwordFromDB = stu.Password
+	} else if identity == constant.TeacherIdentity { // 教师登录
+		tea := entity.Teacher{}
+		err := mysql.DB.Model(&entity.Teacher{}).Where("username = ?", username).Find(&tea).Error
+		if err != nil {
+			return false, "", err
+		}
+		idFromDB = tea.ID
+		passwordFromDB = tea.Password
+	} else if identity == 3 { // 管理员登录
+		adm := entity.Admin{}
+		err := mysql.DB.Model(&entity.Admin{}).Where("username = ?", username).Find(&adm).Error
+		if err != nil {
+			return false, "", err
+		}
+		idFromDB = adm.ID
+		passwordFromDB = adm.Password
 	} else {
 		return false, "", errors.New("登录失败")
 	}
-}
-
-func AdminLogin(username string, password string) (bool, string, error) {
-	if username == "admin" && password == "admin" {
-		
-		return true, "token", nil
+	login := util.ComparePwd(passwordFromDB, password)
+	if login {
+		cacheKey := util.GenerateToken()
+		cacheValue := fmt.Sprintf("%v_%v", idFromDB, identity)
+		redis.RDB.Set(ctx, cacheKey, cacheValue, time.Hour*2)
+		return true, cacheKey, nil
 	} else {
 		return false, "", errors.New("登录失败")
 	}

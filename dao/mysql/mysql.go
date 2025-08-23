@@ -16,6 +16,7 @@ func Init() {
 		panic("failed to connect database")
 	}
 	// Migrate the schema
+	db.AutoMigrate(&entity.Admin{})
 	db.AutoMigrate(&entity.Student{})
 	db.AutoMigrate(&entity.Teacher{})
 	db.AutoMigrate(&entity.Resource{})

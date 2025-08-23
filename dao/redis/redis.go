@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"context"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -19,4 +20,8 @@ func Init() {
 		MinIdleConns: 10,  // 最小空闲连接
 		PoolTimeout:  30 * time.Second,
 	})
+
+	if err := RDB.Ping(context.Background()).Err(); err != nil {
+		panic("连接失败: " + err.Error())
+	}
 }
