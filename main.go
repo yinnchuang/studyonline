@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"studyonline/handler/admin"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/init"
@@ -20,16 +21,21 @@ func main() {
 	{
 		v0.POST("/student", login.StudentLogin)
 		v0.POST("/teacher", login.TeacherLogin)
-		v0.GET("/admin", login.AdminLogin)
+		v0.POST("/admin", login.AdminLogin)
+	}
+	v1 := r.Group("/admin")
+	{
+		v1.POST("/import/student", admin.ImportStudent)
+		v1.POST("/import/teacher", admin.ImportTeacher)
 	}
 	// 获取资源
-	v1 := r.Group("/resource", middleware.Auth)
+	v255 := r.Group("/resource", middleware.Auth)
 	{
-		v1.GET("/file", middleware.Auth, func(c *gin.Context) {
+		v255.GET("/file", middleware.Auth, func(c *gin.Context) {
 			name := c.Param("name")
 			c.String(http.StatusOK, "Hello %s", name)
 		})
-		v1.GET("/dataset", func(c *gin.Context) {
+		v255.GET("/dataset", func(c *gin.Context) {
 			name := c.Param("name")
 			c.String(http.StatusOK, "Hello %s", name)
 		})
