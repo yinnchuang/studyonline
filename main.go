@@ -6,6 +6,7 @@ import (
 	"studyonline/handler/admin"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
+	"studyonline/handler/resource"
 	"studyonline/init"
 
 	"github.com/gin-gonic/gin"
@@ -31,13 +32,15 @@ func main() {
 		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
 	}
 	// 获取资源
-	v255 := r.Group("/resource", middleware.Auth(constant.CommonIdentity))
+	v2 := r.Group("/resource")
 	{
-		v255.GET("/file", middleware.Auth(constant.CommonIdentity), func(c *gin.Context) {
+		v2.GET("/list/random", resource.RandomListResource)
+		
+		v2.GET("/file", middleware.Auth(constant.CommonIdentity), func(c *gin.Context) {
 			name := c.Param("name")
 			c.String(http.StatusOK, "Hello %s", name)
 		})
-		v255.GET("/dataset", func(c *gin.Context) {
+		v2.GET("/dataset", func(c *gin.Context) {
 			name := c.Param("name")
 			c.String(http.StatusOK, "Hello %s", name)
 		})
