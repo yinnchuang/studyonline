@@ -50,6 +50,6 @@ func Login(ctx context.Context, username string, password string, identity int) 
 		redis.RDB.Set(ctx, cacheKey, cacheValue, time.Hour*2)
 		return true, cacheKey, nil
 	} else {
-		return false, "", errors.New("登录失败")
+		return false, "", nil
 	}
 }

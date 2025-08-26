@@ -1,7 +1,6 @@
 package login
 
 import (
-	"fmt"
 	"net/http"
 	"studyonline/constant"
 	"studyonline/service"
@@ -17,13 +16,12 @@ func StudentLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
-	if success {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "请求成功",
-			"token":   token,
-		})
-	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"token":   token,
+	})
 }
 
 func TeacherLogin(c *gin.Context) {
@@ -35,12 +33,11 @@ func TeacherLogin(c *gin.Context) {
 			"message": "请求失败",
 		})
 	}
-	if success {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "请求成功",
-			"token":   token,
-		})
-	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"token":   token,
+	})
+	return
 }
 
 func AdminLogin(c *gin.Context) {
@@ -52,15 +49,9 @@ func AdminLogin(c *gin.Context) {
 			"message": "请求失败",
 		})
 	}
-	if success {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "请求成功",
-			"token":   token,
-		})
-	}
-}
-
-func Register(c *gin.Context) {
-	name := c.DefaultQuery("name", "lily")
-	c.String(200, fmt.Sprintf("hello %s\n", name))
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"token":   token,
+	})
+	return
 }

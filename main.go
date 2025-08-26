@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
 	"studyonline/constant"
 	"studyonline/handler/admin"
+	"studyonline/handler/dataset"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/resource"
@@ -31,21 +31,21 @@ func main() {
 		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
 		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
 	}
-	// 获取资源
+	// 资源
 	v2 := r.Group("/resource")
 	{
-		v2.GET("/list/random", resource.RandomListResource)
-		
-		v2.GET("/file", middleware.Auth(constant.CommonIdentity), func(c *gin.Context) {
-			name := c.Param("name")
-			c.String(http.StatusOK, "Hello %s", name)
-		})
-		v2.GET("/dataset", func(c *gin.Context) {
-			name := c.Param("name")
-			c.String(http.StatusOK, "Hello %s", name)
-		})
+		v2.GET("/list", middleware.Auth(constant.CommonIdentity), resource.ListResource)
+		v2.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), resource.ListResource)
+		// 一般是先upload然后获取地址，然后再create
+		v2.POST("/upload", middleware.Auth(constant.TeacherIdentity), resource.UploadResource)
+		v2.POST("/create", middleware.Auth(constant.TeacherIdentity), resource.CreateResource)
 	}
-	// 上传资源
+	// 数据集
+	v3 := r.Group("/dataset")
+	{
+		v3.GET("/list", dataset.ListDataset)
+
+	}
 
 	r.Run(":18000")
 }
