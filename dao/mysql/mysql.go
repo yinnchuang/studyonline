@@ -21,6 +21,8 @@ func Init() {
 	db.AutoMigrate(&entity.Teacher{})
 	db.AutoMigrate(&entity.Resource{})
 	db.AutoMigrate(&entity.Dataset{})
-
+	db.AutoMigrate(&entity.Score{})
+	db.AutoMigrate(&entity.Unit{})
+	db.AutoMigrate(&entity.Announcement{})
 	DB = db
 }

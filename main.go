@@ -3,10 +3,13 @@ package main
 import (
 	"studyonline/constant"
 	"studyonline/handler/admin"
+	"studyonline/handler/announcement"
 	"studyonline/handler/dataset"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/resource"
+	"studyonline/handler/score"
+	"studyonline/handler/unit"
 	"studyonline/init"
 
 	"github.com/gin-gonic/gin"
@@ -46,6 +49,25 @@ func main() {
 		v3.GET("/list", dataset.ListDataset)
 
 	}
-
+	// 知识点
+	v4 := r.Group("/unit")
+	{
+		v4.GET("/list", middleware.Auth(constant.CommonIdentity), unit.GetAllUnit)
+		v4.POST("/create", middleware.Auth(constant.TeacherIdentity), unit.CreateUnit)
+		v4.POST("/delete", middleware.Auth(constant.TeacherIdentity), unit.RemoveUnit)
+	}
+	// 公告
+	v5 := r.Group("/announcement")
+	{
+		v5.GET("/list", middleware.Auth(constant.CommonIdentity), announcement.GetAllAnnouncements)
+		v5.POST("/create", middleware.Auth(constant.TeacherIdentity), announcement.CreateAnnouncement)
+	}
+	// 分数
+	v6 := r.Group("/score")
+	{
+		v6.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
+		v6.GET("/list/mean", middleware.Auth(constant.TeacherIdentity), score.GetMeanScore)
+		v6.GET("/list/student", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
+	}
 	r.Run(":18000")
 }
