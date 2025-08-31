@@ -24,5 +24,6 @@ func Init() {
 	db.AutoMigrate(&entity.Score{})
 	db.AutoMigrate(&entity.Unit{})
 	db.AutoMigrate(&entity.Announcement{})
+	db.AutoMigrate(&entity.Homework{})
 	DB = db
 }

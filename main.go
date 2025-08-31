@@ -5,6 +5,7 @@ import (
 	"studyonline/handler/admin"
 	"studyonline/handler/announcement"
 	"studyonline/handler/dataset"
+	"studyonline/handler/homework"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/resource"
@@ -41,6 +42,7 @@ func main() {
 	{
 		v2.GET("/list", middleware.Auth(constant.CommonIdentity), resource.ListResource)
 		v2.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), resource.ListResourceByCategory)
+		v2.GET("/list/by/unit", middleware.Auth(constant.CommonIdentity), resource.ListResourceByUnit)
 		// 一般是先upload文件然后获取地址，然后再create
 		v2.POST("/upload", middleware.Auth(constant.TeacherIdentity), resource.UploadResource)
 		v2.POST("/create", middleware.Auth(constant.TeacherIdentity), resource.CreateResource)
@@ -50,6 +52,7 @@ func main() {
 	{
 		v3.GET("/list", middleware.Auth(constant.CommonIdentity), dataset.ListDataset)
 		v3.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByCategory)
+		v3.GET("/list/by/unit", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByUnit)
 		// 一般是先upload文件然后获取地址，然后再create
 		v3.POST("/upload", middleware.Auth(constant.TeacherIdentity), dataset.UploadDataset)
 		v3.POST("/create", middleware.Auth(constant.TeacherIdentity), dataset.CreateDataset)
@@ -68,12 +71,20 @@ func main() {
 		v5.POST("/create", middleware.Auth(constant.TeacherIdentity), announcement.CreateAnnouncement)
 		v5.POST("/remove", middleware.Auth(constant.TeacherIdentity), announcement.RemoveAnnouncement)
 	}
-	// 分数
-	v6 := r.Group("/score")
+	// 作业
+	v6 := r.Group("/homework")
 	{
-		v6.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
-		v6.GET("/list/mean", middleware.Auth(constant.TeacherIdentity), score.GetMeanScore)
-		v6.GET("/list/student", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
+		v6.GET("/list", middleware.Auth(constant.CommonIdentity), homework.ListHomework)
+		v6.POST("/upload", middleware.Auth(constant.TeacherIdentity), homework.UploadHomework)
+		v6.POST("/create", middleware.Auth(constant.TeacherIdentity), homework.CreateHomework)
+		v6.POST("/delete", middleware.Auth(constant.TeacherIdentity), homework.RemoveHomework)
+	}
+	// 分数
+	v7 := r.Group("/score")
+	{
+		v7.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
+		v7.GET("/list/mean", middleware.Auth(constant.TeacherIdentity), score.GetMeanScore)
+		v7.GET("/list/student", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
 	}
 	r.Run(":18000")
 }

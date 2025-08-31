@@ -60,10 +60,12 @@ func UploadResource(c *gin.Context) {
 		return
 	}
 
+	fileAbsPath, _ := filepath.Abs(newFileName)
+	coverAbsPath, _ := filepath.Abs(newCoverName)
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "请求成功",
-		"resource": newFileName,
-		"cover":    newCoverName,
+		"resource": fileAbsPath,
+		"cover":    coverAbsPath,
 	})
 }
 
