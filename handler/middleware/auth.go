@@ -1,13 +1,14 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"studyonline/constant"
 	"studyonline/dao/redis"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Auth(iden int) gin.HandlerFunc {

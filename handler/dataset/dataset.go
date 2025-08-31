@@ -1,4 +1,4 @@
-package resource
+package dataset
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UploadResource(c *gin.Context) {
+func UploadDataset(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -67,7 +67,7 @@ func UploadResource(c *gin.Context) {
 	})
 }
 
-type CreateResourceRequest struct {
+type CreateDatasetRequest struct {
 	Name        string `json:"name"`
 	CategoryID  int    `json:"category_id"`
 	Description string `json:"description"`
@@ -75,18 +75,18 @@ type CreateResourceRequest struct {
 	CoverPath   string `json:"cover_path"`
 }
 
-func CreateResource(c *gin.Context) {
-	createResourceRequest := CreateResourceRequest{}
-	err := c.ShouldBind(&createResourceRequest)
+func CreateDataset(c *gin.Context) {
+	createDatasetRequest := CreateDatasetRequest{}
+	err := c.ShouldBind(&createDatasetRequest)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	err = service.CreateResource(c, createResourceRequest.Name,
-		createResourceRequest.CategoryID, createResourceRequest.Description,
-		createResourceRequest.FilePath, createResourceRequest.CoverPath)
+	err = service.CreateResource(c, createDatasetRequest.Name,
+		createDatasetRequest.CategoryID, createDatasetRequest.Description,
+		createDatasetRequest.FilePath, createDatasetRequest.CoverPath)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

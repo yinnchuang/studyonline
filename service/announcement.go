@@ -19,3 +19,8 @@ func CreateAnnouncement(c context.Context, announcement entity.Announcement) err
 	err := mysql.DB.Model(&entity.Announcement{}).Create(&announcement).Error
 	return err
 }
+
+func RemoveAnnouncement(c context.Context, id uint) error {
+	err := mysql.DB.Model(&entity.Announcement{}).Delete(&entity.Announcement{}, id).Error
+	return err
+}

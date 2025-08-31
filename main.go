@@ -10,13 +10,13 @@ import (
 	"studyonline/handler/resource"
 	"studyonline/handler/score"
 	"studyonline/handler/unit"
-	"studyonline/init"
+	minit "studyonline/init"
 
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	init.Init()
+	minit.Init()
 }
 
 func main() {
@@ -38,16 +38,19 @@ func main() {
 	v2 := r.Group("/resource")
 	{
 		v2.GET("/list", middleware.Auth(constant.CommonIdentity), resource.ListResource)
-		v2.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), resource.ListResource)
-		// 一般是先upload然后获取地址，然后再create
+		v2.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), resource.ListResourceByCategory)
+		// 一般是先upload文件然后获取地址，然后再create
 		v2.POST("/upload", middleware.Auth(constant.TeacherIdentity), resource.UploadResource)
 		v2.POST("/create", middleware.Auth(constant.TeacherIdentity), resource.CreateResource)
 	}
 	// 数据集
 	v3 := r.Group("/dataset")
 	{
-		v3.GET("/list", dataset.ListDataset)
-
+		v3.GET("/list", middleware.Auth(constant.CommonIdentity), dataset.ListDataset)
+		v3.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByCategory)
+		// 一般是先upload文件然后获取地址，然后再create
+		v3.POST("/upload", middleware.Auth(constant.TeacherIdentity), dataset.UploadDataset)
+		v3.POST("/create", middleware.Auth(constant.TeacherIdentity), dataset.CreateDataset)
 	}
 	// 知识点
 	v4 := r.Group("/unit")
@@ -61,6 +64,7 @@ func main() {
 	{
 		v5.GET("/list", middleware.Auth(constant.CommonIdentity), announcement.GetAllAnnouncements)
 		v5.POST("/create", middleware.Auth(constant.TeacherIdentity), announcement.CreateAnnouncement)
+		v5.POST("/remove", middleware.Auth(constant.TeacherIdentity), announcement.RemoveAnnouncement)
 	}
 	// 分数
 	v6 := r.Group("/score")
