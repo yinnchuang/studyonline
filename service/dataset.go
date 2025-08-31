@@ -25,7 +25,7 @@ func ListDatasetWithCategory(ctx context.Context, limit int, offset int, categor
 	return datasets, nil
 }
 
-func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string) error {
+func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, unitId uint) error {
 	resourceAbsPath, _ := filepath.Abs(filePath)
 	coverAbsPath, _ := filepath.Abs(coverPath)
 	dataset := entity.Dataset{
@@ -34,6 +34,7 @@ func CreateDataset(ctx context.Context, name string, categoryId int, description
 		Description: description,
 		FilePath:    resourceAbsPath,
 		CoverPath:   coverAbsPath,
+		UnitId:      unitId,
 	}
 	err := mysql.DB.Create(&dataset).Error
 	if err != nil {

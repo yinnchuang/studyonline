@@ -26,3 +26,22 @@ func Import(ctx context.Context, user interface{}, identity int) error {
 	}
 	return nil
 }
+
+func List(ctx context.Context, identity int) (interface{}, error) {
+	if identity == constant.StudentIdentity {
+		var students []entity.Student
+		err := mysql.DB.Model(&entity.Student{}).Find(&students).Error
+		if err != nil {
+			return nil, err
+		}
+		return students, nil
+	} else if identity == constant.TeacherIdentity {
+		var teachers []entity.Teacher
+		err := mysql.DB.Model(&entity.Teacher{}).Find(&teachers).Error
+		if err != nil {
+			return nil, err
+		}
+		return teachers, nil
+	}
+	return nil, nil
+}

@@ -31,6 +31,8 @@ func main() {
 	// 管理员导入
 	v1 := r.Group("/admin")
 	{
+		v1.GET("/list/student", middleware.Auth(constant.AdminIdentity), admin.ListStudent)
+		v1.GET("/list/teacher", middleware.Auth(constant.AdminIdentity), admin.ListTeacher)
 		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
 		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
 	}

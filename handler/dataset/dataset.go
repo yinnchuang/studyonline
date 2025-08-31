@@ -67,26 +67,27 @@ func UploadDataset(c *gin.Context) {
 	})
 }
 
-type CreateDatasetRequest struct {
+type CreateDatasetPSO struct {
 	Name        string `json:"name"`
 	CategoryID  int    `json:"category_id"`
 	Description string `json:"description"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
+	UnitId      uint   `json:"unit_id"`
 }
 
 func CreateDataset(c *gin.Context) {
-	createDatasetRequest := CreateDatasetRequest{}
-	err := c.ShouldBind(&createDatasetRequest)
+	createDatasetPSO := CreateDatasetPSO{}
+	err := c.ShouldBind(&createDatasetPSO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	err = service.CreateResource(c, createDatasetRequest.Name,
-		createDatasetRequest.CategoryID, createDatasetRequest.Description,
-		createDatasetRequest.FilePath, createDatasetRequest.CoverPath)
+	err = service.CreateDataset(c, createDatasetPSO.Name, createDatasetPSO.CategoryID,
+		createDatasetPSO.Description, createDatasetPSO.FilePath,
+		createDatasetPSO.CoverPath, createDatasetPSO.UnitId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

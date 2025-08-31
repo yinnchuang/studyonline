@@ -25,7 +25,7 @@ func ListResourceWithCategory(ctx context.Context, limit int, offset int, catego
 	return resources, nil
 }
 
-func CreateResource(ctx context.Context, name string, categoryId int, description string, resourcePath string, coverPath string) error {
+func CreateResource(ctx context.Context, name string, categoryId int, description string, resourcePath string, coverPath string, unitId uint) error {
 	resourceAbsPath, _ := filepath.Abs(resourcePath)
 	coverAbsPath, _ := filepath.Abs(coverPath)
 	resource := entity.Resource{
@@ -34,6 +34,7 @@ func CreateResource(ctx context.Context, name string, categoryId int, descriptio
 		Description: description,
 		FilePath:    resourceAbsPath,
 		CoverPath:   coverAbsPath,
+		UnitId:      unitId,
 	}
 	err := mysql.DB.Create(&resource).Error
 	if err != nil {
