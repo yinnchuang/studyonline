@@ -86,5 +86,5 @@ func main() {
 		v7.GET("/list/mean", middleware.Auth(constant.TeacherIdentity), score.GetMeanScore)
 		v7.GET("/list/student", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
 	}
-	r.Run(":18000")
+	r.Run(":8080")
 }

@@ -18,11 +18,12 @@ type ImportStudentPSO struct {
 
 func ImportStudent(c *gin.Context) {
 	importStudentPSO := ImportStudentPSO{}
-	err := c.ShouldBind(importStudentPSO)
+	err := c.ShouldBind(&importStudentPSO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	name := importStudentPSO.Name
 	username := importStudentPSO.Username
@@ -39,6 +40,7 @@ func ImportStudent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
@@ -53,7 +55,7 @@ type ImportTeacherPSO struct {
 
 func ImportTeacher(c *gin.Context) {
 	importTeacherPSO := ImportTeacherPSO{}
-	err := c.ShouldBind(importTeacherPSO)
+	err := c.ShouldBind(&importTeacherPSO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

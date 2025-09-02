@@ -32,7 +32,7 @@ func Login(ctx context.Context, username string, password string, identity int) 
 		}
 		idFromDB = tea.ID
 		passwordFromDB = tea.Password
-	} else if identity == 3 { // 管理员登录
+	} else if identity == constant.AdminIdentity { // 管理员登录
 		adm := entity.Admin{}
 		err := mysql.DB.Model(&entity.Admin{}).Where("username = ?", username).Find(&adm).Error
 		if err != nil {
@@ -44,6 +44,9 @@ func Login(ctx context.Context, username string, password string, identity int) 
 		return false, "", errors.New("登录失败")
 	}
 	login := util.ComparePwd(passwordFromDB, password)
+	if identity == constant.AdminIdentity {
+		login = password == passwordFromDB
+	}
 	if login {
 		cacheKey := util.GenerateToken()
 		cacheValue := fmt.Sprintf("%v_%v", idFromDB, identity)

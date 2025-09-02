@@ -32,6 +32,7 @@ func TeacherLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
@@ -48,6 +49,7 @@ func AdminLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",

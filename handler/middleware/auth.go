@@ -15,6 +15,7 @@ func Auth(iden int) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
+		log.Println(token)
 		result, err := redis.RDB.Get(c, token).Result()
 		if err != nil {
 			log.Println("token认证失败", err)
@@ -31,6 +32,7 @@ func Auth(iden int) gin.HandlerFunc {
 			c.Set("userId", userId)
 			c.Set("identity", identity)
 			c.Next()
+			return
 		}
 
 		identityInt, err := strconv.Atoi(identity)
@@ -38,6 +40,7 @@ func Auth(iden int) gin.HandlerFunc {
 			c.Set("userId", userId)
 			c.Set("identity", identity)
 			c.Next()
+			return
 		} else {
 			log.Println("token认证失败", err)
 			c.JSON(http.StatusBadRequest, gin.H{
