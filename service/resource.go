@@ -24,9 +24,9 @@ func ListResourceWithCategoryLimitOffset(ctx context.Context, limit int, offset 
 	return resources, nil
 }
 
-func ListResourceWithUnit(ctx context.Context, unit int) ([]entity.Resource, error) {
+func ListResourceWithUnitLimitOffset(ctx context.Context, limit int, offset int, unit int) ([]entity.Resource, error) {
 	var resources []entity.Resource
-	err := mysql.DB.Model(&entity.Resource{}).Order("id DESC").Where("unit_id = ?", unit).Find(&resources).Error
+	err := mysql.DB.Model(&entity.Resource{}).Order("id DESC").Where("unit_id = ?", unit).Limit(limit).Offset(offset).Find(&resources).Error
 	if err != nil {
 		return nil, err
 	}

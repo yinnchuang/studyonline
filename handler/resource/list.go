@@ -69,11 +69,17 @@ func ListResourceByCategory(c *gin.Context) {
 }
 
 func ListResourceByUnit(c *gin.Context) {
-	UnitStr := c.DefaultQuery("unit", "-1")
+	UnitStr := c.DefaultQuery("unit", "0")
 	unit, _ := strconv.Atoi(UnitStr)
 
+	limitStr := c.DefaultQuery("limit", "3")
+	pageStr := c.DefaultQuery("page", "0")
+	limit, _ := strconv.Atoi(limitStr)
+	page, _ := strconv.Atoi(pageStr)
+	offset := page * limit
+
 	// 展示特定种类
-	resourceWithUnit, err := service.ListResourceWithUnit(c, unit)
+	resourceWithUnit, err := service.ListResourceWithUnitLimitOffset(c, limit, offset, unit)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
