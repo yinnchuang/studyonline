@@ -22,14 +22,14 @@ func GetAllAnnouncements(c *gin.Context) {
 	})
 }
 
-type CreateAnnouncementPSO struct {
+type CreateAnnouncementDTO struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
 func CreateAnnouncement(c *gin.Context) {
-	createAnnouncementPSO := CreateAnnouncementPSO{}
-	err := c.ShouldBindBodyWithJSON(&createAnnouncementPSO)
+	createAnnouncementDTO := CreateAnnouncementDTO{}
+	err := c.ShouldBindBodyWithJSON(&createAnnouncementDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -37,8 +37,8 @@ func CreateAnnouncement(c *gin.Context) {
 		return
 	}
 	announcement := entity.Announcement{
-		Title:       createAnnouncementPSO.Title,
-		Description: createAnnouncementPSO.Description,
+		Title:       createAnnouncementDTO.Title,
+		Description: createAnnouncementDTO.Description,
 	}
 	err = service.CreateAnnouncement(c, announcement)
 	if err != nil {
@@ -52,20 +52,20 @@ func CreateAnnouncement(c *gin.Context) {
 	})
 }
 
-type RemoveAnnouncementPSO struct {
+type RemoveAnnouncementDTO struct {
 	Id uint `json:"id"`
 }
 
 func RemoveAnnouncement(c *gin.Context) {
-	removeAnnouncementPSO := RemoveAnnouncementPSO{}
-	err := c.ShouldBindBodyWithJSON(&removeAnnouncementPSO)
+	removeAnnouncementDTO := RemoveAnnouncementDTO{}
+	err := c.ShouldBindBodyWithJSON(&removeAnnouncementDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	err = service.RemoveAnnouncement(c, removeAnnouncementPSO.Id)
+	err = service.RemoveAnnouncement(c, removeAnnouncementDTO.Id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

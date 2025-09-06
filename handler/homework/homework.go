@@ -59,7 +59,7 @@ func UploadHomework(c *gin.Context) {
 	})
 }
 
-type CreateHomeworkPSO struct {
+type CreateHomeworkDTO struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	FilePath    string    `json:"file_path"`
@@ -67,8 +67,8 @@ type CreateHomeworkPSO struct {
 }
 
 func CreateHomework(c *gin.Context) {
-	createHomeworkPSO := CreateHomeworkPSO{}
-	err := c.ShouldBindBodyWithJSON(&createHomeworkPSO)
+	createHomeworkDTO := CreateHomeworkDTO{}
+	err := c.ShouldBindBodyWithJSON(&createHomeworkDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -76,10 +76,10 @@ func CreateHomework(c *gin.Context) {
 		return
 	}
 	homework := entity.Homework{
-		Title:       createHomeworkPSO.Title,
-		Description: createHomeworkPSO.Description,
-		FilePath:    createHomeworkPSO.FilePath,
-		ExpireTime:  createHomeworkPSO.ExpireTime,
+		Title:       createHomeworkDTO.Title,
+		Description: createHomeworkDTO.Description,
+		FilePath:    createHomeworkDTO.FilePath,
+		ExpireTime:  createHomeworkDTO.ExpireTime,
 	}
 	err = service.CreateHomework(c, homework)
 	if err != nil {
@@ -93,20 +93,20 @@ func CreateHomework(c *gin.Context) {
 	})
 }
 
-type RemoveHomeworkPSO struct {
-	Id uint `json:"id"`
+type RemoveHomeworkDTO struct {
+	HomeworkId uint `json:"homework_id"`
 }
 
 func RemoveHomework(c *gin.Context) {
-	removeHomeworkPSO := RemoveHomeworkPSO{}
-	err := c.ShouldBindBodyWithJSON(&removeHomeworkPSO)
+	removeHomeworkDTO := RemoveHomeworkDTO{}
+	err := c.ShouldBindBodyWithJSON(&removeHomeworkDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	err = service.RemoveHomework(c, removeHomeworkPSO.Id)
+	err = service.RemoveHomework(c, removeHomeworkDTO.HomeworkId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

@@ -6,6 +6,12 @@ import (
 	"studyonline/dao/mysql"
 )
 
+func GetHomeworkById(ctx context.Context, homeworkId uint) (entity.Homework, error) {
+	var homework entity.Homework
+	err := mysql.DB.Model(&entity.Homework{}).Where("id = ?", homeworkId).Find(&homework).Error
+	return homework, err
+}
+
 func GetAllHomework(ctx context.Context) ([]entity.Homework, error) {
 	var homeworks []entity.Homework
 	err := mysql.DB.Model(&entity.Homework{}).Find(&homeworks).Error

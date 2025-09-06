@@ -10,24 +10,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ImportStudentPSO struct {
+type ImportStudentDTO struct {
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 func ImportStudent(c *gin.Context) {
-	importStudentPSO := ImportStudentPSO{}
-	err := c.ShouldBind(&importStudentPSO)
+	importStudentDTO := ImportStudentDTO{}
+	err := c.ShouldBind(&importStudentDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	name := importStudentPSO.Name
-	username := importStudentPSO.Username
-	password := importStudentPSO.Password
+	name := importStudentDTO.Name
+	username := importStudentDTO.Username
+	password := importStudentDTO.Password
 
 	bcryptPassword, _ := util.GetPwd(password)
 	stu := entity.Student{
@@ -47,23 +47,23 @@ func ImportStudent(c *gin.Context) {
 	})
 }
 
-type ImportTeacherPSO struct {
+type ImportTeacherDTO struct {
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 func ImportTeacher(c *gin.Context) {
-	importTeacherPSO := ImportTeacherPSO{}
-	err := c.ShouldBind(&importTeacherPSO)
+	importTeacherDTO := ImportTeacherDTO{}
+	err := c.ShouldBind(&importTeacherDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 	}
-	name := importTeacherPSO.Name
-	username := importTeacherPSO.Username
-	password := importTeacherPSO.Password
+	name := importTeacherDTO.Name
+	username := importTeacherDTO.Username
+	password := importTeacherDTO.Password
 
 	bcryptPassword, _ := util.GetPwd(password)
 	tea := entity.Teacher{

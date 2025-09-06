@@ -69,7 +69,7 @@ func UploadResource(c *gin.Context) {
 	})
 }
 
-type CreateResourcePSO struct {
+type CreateResourceDTO struct {
 	Name        string `json:"name"`
 	CategoryID  int    `json:"category_id"`
 	Description string `json:"description"`
@@ -79,17 +79,17 @@ type CreateResourcePSO struct {
 }
 
 func CreateResource(c *gin.Context) {
-	createResourcePSO := CreateResourcePSO{}
-	err := c.ShouldBind(&createResourcePSO)
+	createResourceDTO := CreateResourceDTO{}
+	err := c.ShouldBind(&createResourceDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	err = service.CreateResource(c, createResourcePSO.Name, createResourcePSO.CategoryID,
-		createResourcePSO.Description, createResourcePSO.FilePath,
-		createResourcePSO.CoverPath, createResourcePSO.UnitId)
+	err = service.CreateResource(c, createResourceDTO.Name, createResourceDTO.CategoryID,
+		createResourceDTO.Description, createResourceDTO.FilePath,
+		createResourceDTO.CoverPath, createResourceDTO.UnitId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

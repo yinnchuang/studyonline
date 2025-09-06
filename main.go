@@ -4,12 +4,15 @@ import (
 	"studyonline/constant"
 	"studyonline/handler/admin"
 	"studyonline/handler/announcement"
+	"studyonline/handler/comment"
 	"studyonline/handler/dataset"
+	"studyonline/handler/discuss"
 	"studyonline/handler/homework"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/resource"
 	"studyonline/handler/score"
+	"studyonline/handler/submission"
 	"studyonline/handler/unit"
 	minit "studyonline/init"
 
@@ -79,12 +82,37 @@ func main() {
 		v6.POST("/create", middleware.Auth(constant.TeacherIdentity), homework.CreateHomework)
 		v6.POST("/delete", middleware.Auth(constant.TeacherIdentity), homework.RemoveHomework)
 	}
-	// 分数
-	v7 := r.Group("/score")
+	// 学生的提交
+	v7 := r.Group("/submission")
 	{
-		v7.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
-		v7.GET("/list/mean", middleware.Auth(constant.TeacherIdentity), score.GetMeanScore)
-		v7.GET("/list/student", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
+		v7.GET("/list/by/homeworkId", middleware.Auth(constant.CommonIdentity), submission.ListSubmissionByHomeworkId)
+		v7.POST("/upload", middleware.Auth(constant.StudentIdentity), submission.UploadSubmission)
+		v7.POST("/create", middleware.Auth(constant.StudentIdentity), submission.CreateSubmission)
+		v7.POST("/delete", middleware.Auth(constant.StudentIdentity), submission.RemoveSubmission)
+	}
+	// 分数
+	v8 := r.Group("/score")
+	{
+		// 给教师调用
+		v8.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
+		v8.GET("/list/by/homeworkId", middleware.Auth(constant.TeacherIdentity), score.GetScoreByHomeworkId)
+		v8.POST("/create", middleware.Auth(constant.TeacherIdentity), score.CreateScore)
+		// 根据studentId展示，给student调用
+		v8.GET("/list/by/studentId", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
+	}
+	// 讨论
+	v9 := r.Group("/discuss")
+	{
+		v9.GET("/list", middleware.Auth(constant.CommonIdentity), discuss.GetAllDiscusses)
+		v9.POST("/create", middleware.Auth(constant.CommonIdentity), discuss.CreateDiscuss)
+		v9.POST("/delete", middleware.Auth(constant.CommonIdentity), discuss.RemoveDiscuss)
+	}
+	//
+	v10 := r.Group("/comment")
+	{
+		v10.GET("/list/by/discussId", middleware.Auth(constant.CommonIdentity), comment.GetCommentByDiscussId)
+		v10.POST("/create", middleware.Auth(constant.CommonIdentity), comment.CreateComment)
+		v10.POST("/delete", middleware.Auth(constant.CommonIdentity), comment.RemoveComment)
 	}
 	r.Run(":8080")
 }

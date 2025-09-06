@@ -49,22 +49,22 @@ func RemoveUnit(c *gin.Context) {
 	})
 }
 
-type CreateUnitPSO struct {
+type CreateUnitDTO struct {
 	UnitName string `json:"unit_name" binding:"required"`
 	UnitDesc string `json:"unit_desc"`
 }
 
 func CreateUnit(c *gin.Context) {
-	var createUnitPSO CreateUnitPSO
-	if err := c.ShouldBindJSON(&createUnitPSO); err != nil {
+	var createUnitDTO CreateUnitDTO
+	if err := c.ShouldBindJSON(&createUnitDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
 	unit := entity.Unit{
-		UnitName: createUnitPSO.UnitName,
-		UnitDesc: createUnitPSO.UnitDesc,
+		UnitName: createUnitDTO.UnitName,
+		UnitDesc: createUnitDTO.UnitDesc,
 	}
 	err := service.CreateUnit(c, unit)
 	if err != nil {
