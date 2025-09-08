@@ -25,8 +25,13 @@ func Auth(iden int) gin.HandlerFunc {
 			c.Abort()
 		}
 		resSplit := strings.Split(result, "_")
-		userId := resSplit[0]
-		identity := resSplit[1]
+		userIdStr := resSplit[0]
+		identityStr := resSplit[1]
+		userId_, _ := strconv.Atoi(userIdStr)
+		userId := uint(userId_)
+		identity, _ := strconv.Atoi(identityStr)
+
+		log.Println("id为", userId, "的用户，身份为", identity, "正在请求", c.FullPath())
 
 		if iden == constant.CommonIdentity {
 			c.Set("userId", userId)
@@ -35,8 +40,7 @@ func Auth(iden int) gin.HandlerFunc {
 			return
 		}
 
-		identityInt, err := strconv.Atoi(identity)
-		if iden == identityInt {
+		if iden == identity {
 			c.Set("userId", userId)
 			c.Set("identity", identity)
 			c.Next()

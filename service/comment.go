@@ -23,7 +23,7 @@ func CreateComment(c context.Context, comment entity.Comment) error {
 
 func RemoveComment(c context.Context, id uint, userId uint) error {
 	var comment entity.Comment
-	err := mysql.DB.Model(&entity.Comment{}).Where("id = ?", id, userId).Find(&comment).Error
+	err := mysql.DB.Model(&entity.Comment{}).Where("id = ?", id).Find(&comment).Error
 	if err != nil {
 		return err
 	}
