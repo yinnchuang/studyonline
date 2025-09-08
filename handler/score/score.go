@@ -1,11 +1,12 @@
 package score
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"studyonline/dao/entity"
 	"studyonline/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetScoreByStudentId(c *gin.Context) {
@@ -74,7 +75,7 @@ func CreateScore(c *gin.Context) {
 		HomeworkId: createScoreDTO.HomeworkId,
 		Score:      createScoreDTO.Score,
 	}
-	err := service.CreateScore(c)
+	err := service.CreateScore(c, score)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
