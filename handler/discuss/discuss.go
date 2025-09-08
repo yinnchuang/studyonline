@@ -1,10 +1,11 @@
 package discuss
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"studyonline/dao/entity"
 	"studyonline/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllDiscusses(c *gin.Context) {
@@ -35,7 +36,7 @@ func CreateDiscuss(c *gin.Context) {
 		})
 		return
 	}
-	userId := c.GetUint("user_id")
+	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
 	userInfo, err := service.GetUserInfo(userId, identity)
 	if err != nil || userInfo == nil {

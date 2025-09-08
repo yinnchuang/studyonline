@@ -1,11 +1,13 @@
 package comment
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
 	"studyonline/dao/entity"
 	"studyonline/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetCommentByDiscussId(c *gin.Context) {
@@ -38,8 +40,9 @@ func CreateComment(c *gin.Context) {
 		})
 		return
 	}
-	userId := c.GetUint("user_id")
+	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
+	log.Println(userId, identity)
 	userInfo, err := service.GetUserInfo(userId, identity)
 	if err != nil || userInfo == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
