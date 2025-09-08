@@ -30,6 +30,6 @@ func RemoveComment(c context.Context, id uint, userId uint) error {
 	if comment.UserId != userId {
 		return errors.New("dont match user id")
 	}
-	err = mysql.DB.Model(&entity.Discuss{}).Delete(&entity.Discuss{}, id).Error
+	err = mysql.DB.Model(&entity.Comment{}).Delete(&entity.Comment{}, id).Error
 	return err
 }
