@@ -16,6 +16,7 @@ import (
 	"studyonline/handler/unit"
 	minit "studyonline/init"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.Default())
 	// 登录
 	v0 := r.Group("/login")
 	{
