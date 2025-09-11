@@ -50,7 +50,7 @@ func Login(ctx context.Context, username string, password string, identity int) 
 	if login {
 		cacheKey := util.GenerateToken()
 		cacheValue := fmt.Sprintf("%v_%v", idFromDB, identity)
-		redis.RDB.Set(ctx, cacheKey, cacheValue, time.Hour*2)
+		redis.RDB.Set(ctx, cacheKey, cacheValue, time.Hour*6)
 		return true, cacheKey, nil
 	} else {
 		return false, "", nil

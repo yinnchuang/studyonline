@@ -15,6 +15,7 @@ import (
 	"studyonline/handler/submission"
 	"studyonline/handler/unit"
 	minit "studyonline/init"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,14 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // 也可写具体前端地址
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // 关键：加上你用的头
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true, // 如果带 cookie
+		MaxAge:           12 * time.Hour,
+	}))
 	// 登录
 	v0 := r.Group("/login")
 	{
