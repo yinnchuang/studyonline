@@ -14,6 +14,7 @@ import (
 	"studyonline/handler/score"
 	"studyonline/handler/submission"
 	"studyonline/handler/unit"
+	"studyonline/handler/user"
 	minit "studyonline/init"
 	"time"
 
@@ -123,6 +124,11 @@ func main() {
 		v10.GET("/list/by/discussId", middleware.Auth(constant.CommonIdentity), comment.GetCommentByDiscussId)
 		v10.POST("/create", middleware.Auth(constant.CommonIdentity), comment.CreateComment)
 		v10.POST("/delete", middleware.Auth(constant.CommonIdentity), comment.RemoveComment)
+	}
+	// 用户信息
+	v11 := r.Group("/user")
+	{
+		v11.GET("/info", middleware.Auth(constant.CommonIdentity), user.GetUserInfo)
 	}
 	r.Run(":8080")
 }
