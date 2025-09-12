@@ -15,6 +15,15 @@ func ListResourceWithLimitOffset(ctx context.Context, limit int, offset int) ([]
 	return resources, nil
 }
 
+func CountResource(ctx context.Context) (int64, error) {
+	var count int64
+	err := mysql.DB.Model(&entity.Resource{}).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func ListResourceWithCategoryLimitOffset(ctx context.Context, limit int, offset int, category int) ([]entity.Resource, error) {
 	var resources []entity.Resource
 	err := mysql.DB.Model(&entity.Resource{}).Order("id DESC").Where("category_id = ?", category).Limit(limit).Offset(offset).Find(&resources).Error
@@ -22,6 +31,15 @@ func ListResourceWithCategoryLimitOffset(ctx context.Context, limit int, offset 
 		return nil, err
 	}
 	return resources, nil
+}
+
+func CountResourceWithCategory(ctx context.Context, category int) (int64, error) {
+	var count int64
+	err := mysql.DB.Model(&entity.Resource{}).Where("category_id = ?", category).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func ListResourceWithUnitLimitOffset(ctx context.Context, limit int, offset int, unit int) ([]entity.Resource, error) {

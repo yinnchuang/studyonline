@@ -14,3 +14,11 @@ var (
 	NaturalLanguage = 2003
 	DataProcess     = 2004
 )
+
+func IfResourceCategory(code int) bool {
+	return code == Video || code == Courseware || code == Exercises || code == ProjectCase || code == Package || code == OtherResource
+}
+
+func IfDatasetCategory(code int) bool {
+	return code == LLMApplication || code == ComputerVision || code == NaturalLanguage || code == DataProcess
+}

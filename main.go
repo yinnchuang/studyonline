@@ -118,7 +118,7 @@ func main() {
 		v9.POST("/create", middleware.Auth(constant.CommonIdentity), discuss.CreateDiscuss)
 		v9.POST("/delete", middleware.Auth(constant.CommonIdentity), discuss.RemoveDiscuss)
 	}
-	//
+	// 评论
 	v10 := r.Group("/comment")
 	{
 		v10.GET("/list/by/discussId", middleware.Auth(constant.CommonIdentity), comment.GetCommentByDiscussId)

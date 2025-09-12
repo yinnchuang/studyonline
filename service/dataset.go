@@ -15,6 +15,15 @@ func ListDatasetWithLimitOffset(ctx context.Context, limit int, offset int) ([]e
 	return datasets, nil
 }
 
+func CountDataset(ctx context.Context) (int64, error) {
+	var count int64
+	err := mysql.DB.Model(&entity.Dataset{}).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func ListDatasetWithCategoryLimitOffset(ctx context.Context, limit int, offset int, category int) ([]entity.Dataset, error) {
 	var datasets []entity.Dataset
 	err := mysql.DB.Model(&entity.Dataset{}).Order("id DESC").Where("category_id = ?", category).Limit(limit).Offset(offset).Find(&datasets).Error
@@ -22,6 +31,15 @@ func ListDatasetWithCategoryLimitOffset(ctx context.Context, limit int, offset i
 		return nil, err
 	}
 	return datasets, nil
+}
+
+func CountDatasetWithCategory(ctx context.Context, category int) (int64, error) {
+	var count int64
+	err := mysql.DB.Model(&entity.Dataset{}).Where("category_id = ?", category).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func ListDatasetWithUnit(ctx context.Context, unit int) ([]entity.Dataset, error) {

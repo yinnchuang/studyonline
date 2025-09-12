@@ -3,6 +3,7 @@ package resource
 import (
 	"net/http"
 	"strconv"
+	"studyonline/constant"
 	"studyonline/service"
 
 	"github.com/gin-gonic/gin"
@@ -21,9 +22,17 @@ func ListResource(c *gin.Context) {
 		})
 		return
 	}
+	total, err := service.CountResource(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 		"data":    resourceWithLimit,
+		"total":   total,
 	})
 }
 
@@ -37,20 +46,11 @@ func ListResourceByCategory(c *gin.Context) {
 	page, _ := strconv.Atoi(pageStr)
 	offset := page * limit
 
-	// 展示所有
-	if category == -1 {
-		resourceWithLimit, err := service.ListResourceWithLimitOffset(c, limit, offset)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "请求失败",
-			})
-			return
-		} else {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "请求成功",
-				"data":    resourceWithLimit,
-			})
-		}
+	// 非类别之一
+	if !constant.IfResourceCategory(category) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
 	}
 
 	// 展示特定种类
@@ -60,12 +60,20 @@ func ListResourceByCategory(c *gin.Context) {
 			"message": "请求失败",
 		})
 		return
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "请求成功",
-			"data":    resourceWithCategory,
-		})
 	}
+	total, err := service.CountResourceWithCategory(c, category)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"data":    resourceWithCategory,
+		"total":   total,
+	})
+
 }
 
 func ListResourceByUnit(c *gin.Context) {
