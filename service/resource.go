@@ -42,23 +42,33 @@ func CountResourceWithCategory(ctx context.Context, category int) (int64, error)
 	return count, nil
 }
 
-func ListResourceWithUnitLimitOffset(ctx context.Context, limit int, offset int, unit int) ([]entity.Resource, error) {
+func ListResourceWithUnitLimitOffset(ctx context.Context, limit int, offset int, unitIds []uint) ([]entity.Resource, error) {
 	var resources []entity.Resource
-	err := mysql.DB.Model(&entity.Resource{}).Order("id DESC").Where("unit_id = ?", unit).Limit(limit).Offset(offset).Find(&resources).Error
+	err := mysql.DB.Preload("Units").
+		Joins("JOIN resource_units ru ON ru.resource_id = resources.id").
+		Where("ru.unit_id IN ?", unitIds).
+		Distinct().
+		Find(&resources).Error
 	if err != nil {
 		return nil, err
 	}
 	return resources, nil
 }
 
-func CreateResource(ctx context.Context, name string, categoryId int, description string, filepath string, coverPath string, unitId uint) error {
+func CreateResource(ctx context.Context, name string, categoryId int, description string, filepath string, coverPath string, unitIds []uint) error {
+	units := make([]entity.Unit, len(unitIds))
+	for i, id := range unitIds {
+		var unit entity.Unit
+		unit.ID = id
+		units[i] = unit
+	}
 	resource := entity.Resource{
 		Name:        name,
 		CategoryID:  categoryId,
 		Description: description,
 		FilePath:    filepath,
 		CoverPath:   coverPath,
-		UnitId:      unitId,
+		Units:       units,
 	}
 	err := mysql.DB.Create(&resource).Error
 	if err != nil {

@@ -60,12 +60,10 @@ func UploadResource(c *gin.Context) {
 		return
 	}
 
-	fileAbsPath, _ := filepath.Abs(newFileName)
-	coverAbsPath, _ := filepath.Abs(newCoverName)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"file":    fileAbsPath,
-		"cover":   coverAbsPath,
+		"file":    newFileName,
+		"cover":   newCoverName,
 	})
 }
 
@@ -75,7 +73,7 @@ type CreateResourceDTO struct {
 	Description string `json:"description"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
-	UnitId      uint   `json:"unit_id"`
+	UnitIds     []uint `json:"unit_ids"`
 }
 
 func CreateResource(c *gin.Context) {
@@ -89,7 +87,7 @@ func CreateResource(c *gin.Context) {
 	}
 	err = service.CreateResource(c, createResourceDTO.Name, createResourceDTO.CategoryID,
 		createResourceDTO.Description, createResourceDTO.FilePath,
-		createResourceDTO.CoverPath, createResourceDTO.UnitId)
+		createResourceDTO.CoverPath, createResourceDTO.UnitIds)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

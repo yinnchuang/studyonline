@@ -66,7 +66,6 @@ func main() {
 	{
 		v3.GET("/list", middleware.Auth(constant.CommonIdentity), dataset.ListDataset)
 		v3.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByCategory)
-		v3.GET("/list/by/unit", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByUnit)
 		// 一般是先upload文件然后获取地址，然后再create
 		v3.POST("/upload", middleware.Auth(constant.TeacherIdentity), dataset.UploadDataset)
 		v3.POST("/create", middleware.Auth(constant.TeacherIdentity), dataset.CreateDataset)

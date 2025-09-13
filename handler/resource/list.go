@@ -15,7 +15,7 @@ func ListResource(c *gin.Context) {
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
 	offset := page * limit
-	resourceWithLimit, err := service.ListResourceWithLimitOffset(c, limit, offset)
+	resourceWithLimitOffset, err := service.ListResourceWithLimitOffset(c, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -31,7 +31,7 @@ func ListResource(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    resourceWithLimit,
+		"data":    resourceWithLimitOffset,
 		"total":   total,
 	})
 }
@@ -76,9 +76,19 @@ func ListResourceByCategory(c *gin.Context) {
 
 }
 
+type ListResourceByUnitDTO struct {
+	UnitIds []uint `json:"unit_ids"`
+}
+
 func ListResourceByUnit(c *gin.Context) {
-	UnitStr := c.DefaultQuery("unit", "0")
-	unit, _ := strconv.Atoi(UnitStr)
+	var listResourceByUnitDTO ListResourceByUnitDTO
+	err := c.ShouldBind(&listResourceByUnitDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
 
 	limitStr := c.DefaultQuery("limit", "3")
 	pageStr := c.DefaultQuery("page", "0")
@@ -87,7 +97,7 @@ func ListResourceByUnit(c *gin.Context) {
 	offset := page * limit
 
 	// 展示特定种类
-	resourceWithUnit, err := service.ListResourceWithUnitLimitOffset(c, limit, offset, unit)
+	resourceWithUnit, err := service.ListResourceWithUnitLimitOffset(c, limit, offset, listResourceByUnitDTO.UnitIds)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

@@ -59,12 +59,10 @@ func UploadDataset(c *gin.Context) {
 		})
 		return
 	}
-	fileAbsPath, _ := filepath.Abs(newFileName)
-	coverAbsPath, _ := filepath.Abs(newCoverName)
 	c.JSON(http.StatusOK, gin.H{
-		"message":  "请求成功",
-		"resource": fileAbsPath,
-		"cover":    coverAbsPath,
+		"message": "请求成功",
+		"file":    newFileName,
+		"cover":   newCoverName,
 	})
 }
 
@@ -72,9 +70,9 @@ type CreateDatasetDTO struct {
 	Name        string `json:"name"`
 	CategoryID  int    `json:"category_id"`
 	Description string `json:"description"`
+	Scale       string `json:"scale"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
-	UnitId      uint   `json:"unit_id"`
 }
 
 func CreateDataset(c *gin.Context) {
@@ -88,7 +86,7 @@ func CreateDataset(c *gin.Context) {
 	}
 	err = service.CreateDataset(c, createDatasetDTO.Name, createDatasetDTO.CategoryID,
 		createDatasetDTO.Description, createDatasetDTO.FilePath,
-		createDatasetDTO.CoverPath, createDatasetDTO.UnitId)
+		createDatasetDTO.CoverPath, createDatasetDTO.Scale)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

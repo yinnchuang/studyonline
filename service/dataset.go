@@ -42,23 +42,14 @@ func CountDatasetWithCategory(ctx context.Context, category int) (int64, error) 
 	return count, nil
 }
 
-func ListDatasetWithUnit(ctx context.Context, unit int) ([]entity.Dataset, error) {
-	var datasets []entity.Dataset
-	err := mysql.DB.Model(&entity.Dataset{}).Order("id DESC").Where("unit_id = ?", unit).Find(&datasets).Error
-	if err != nil {
-		return nil, err
-	}
-	return datasets, nil
-}
-
-func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, unitId uint) error {
+func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, scale string) error {
 	dataset := entity.Dataset{
 		Name:        name,
 		CategoryID:  categoryId,
 		Description: description,
+		Scale:       scale,
 		FilePath:    filePath,
 		CoverPath:   coverPath,
-		UnitId:      unitId,
 	}
 	err := mysql.DB.Create(&dataset).Error
 	if err != nil {

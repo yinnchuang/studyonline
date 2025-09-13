@@ -9,5 +9,5 @@ type Resource struct {
 	Description string `json:"description,omitempty"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
-	UnitId      uint   `json:"unit_id"`
+	Units       []Unit `gorm:"many2many:resource_units;" json:"unit_ids"`
 }

@@ -22,7 +22,7 @@ func ListDataset(c *gin.Context) {
 		})
 		return
 	}
-	total, err := service.CountResource(c)
+	total, err := service.CountDataset(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -74,23 +74,4 @@ func ListDatasetByCategory(c *gin.Context) {
 		"data":    datasetWithCategory,
 		"total":   total,
 	})
-}
-
-func ListDatasetByUnit(c *gin.Context) {
-	unitStr := c.DefaultQuery("unit", "-1")
-	unit, _ := strconv.Atoi(unitStr)
-
-	// 展示特定种类
-	datasetWithUnit, err := service.ListDatasetWithUnit(c, unit)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
-		})
-		return
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "请求成功",
-			"data":    datasetWithUnit,
-		})
-	}
 }

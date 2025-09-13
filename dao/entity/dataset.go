@@ -7,7 +7,7 @@ type Dataset struct {
 	Name        string `json:"name" gorm:"not null"`
 	CategoryID  int    `json:"category_id" gorm:"not null"`
 	Description string `json:"description,omitempty"`
+	Scale       string `json:"scale"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
-	UnitId      uint   `json:"unit_id"`
 }

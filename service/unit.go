@@ -8,7 +8,7 @@ import (
 
 func GetAllUnit(c context.Context) ([]entity.Unit, error) {
 	var units []entity.Unit
-	err := mysql.DB.Model(&entity.Score{}).Find(&units).Error
+	err := mysql.DB.Model(&entity.Unit{}).Find(&units).Error
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +16,7 @@ func GetAllUnit(c context.Context) ([]entity.Unit, error) {
 }
 
 func RemoveUnit(c context.Context, unitId uint) error {
-	err := mysql.DB.Model(&entity.Score{}).Where("id = ?", unitId).Delete(&entity.Score{}).Error
+	err := mysql.DB.Model(&entity.Unit{}).Where("id = ?", unitId).Delete(&entity.Unit{}).Error
 	return err
 }
 
