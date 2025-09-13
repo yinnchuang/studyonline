@@ -3,7 +3,6 @@ package main
 import (
 	"studyonline/constant"
 	"studyonline/handler/admin"
-	"studyonline/handler/announcement"
 	"studyonline/handler/comment"
 	"studyonline/handler/dataset"
 	"studyonline/handler/discuss"
@@ -77,13 +76,13 @@ func main() {
 		v4.POST("/create", middleware.Auth(constant.TeacherIdentity), unit.CreateUnit)
 		v4.POST("/delete", middleware.Auth(constant.TeacherIdentity), unit.RemoveUnit)
 	}
-	// 公告
-	v5 := r.Group("/announcement")
-	{
-		v5.GET("/list", middleware.Auth(constant.CommonIdentity), announcement.GetAllAnnouncements)
-		v5.POST("/create", middleware.Auth(constant.TeacherIdentity), announcement.CreateAnnouncement)
-		v5.POST("/remove", middleware.Auth(constant.TeacherIdentity), announcement.RemoveAnnouncement)
-	}
+	//// 公告
+	//v5 := r.Group("/announcement")
+	//{
+	//	v5.GET("/list", middleware.Auth(constant.CommonIdentity), announcement.GetAllAnnouncements)
+	//	v5.POST("/create", middleware.Auth(constant.TeacherIdentity), announcement.CreateAnnouncement)
+	//	v5.POST("/remove", middleware.Auth(constant.TeacherIdentity), announcement.RemoveAnnouncement)
+	//}
 	// 作业
 	v6 := r.Group("/homework")
 	{
