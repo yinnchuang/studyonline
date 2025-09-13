@@ -129,5 +129,8 @@ func main() {
 	{
 		v11.GET("/info", middleware.Auth(constant.CommonIdentity), user.GetUserInfo)
 	}
+	// 静态资源
+	r.Static("/static", "./static")
+
 	r.Run(":8080")
 }
