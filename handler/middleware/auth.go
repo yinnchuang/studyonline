@@ -40,6 +40,15 @@ func Auth(iden int) gin.HandlerFunc {
 			return
 		}
 
+		if iden == constant.StaffIdentity {
+			if identity == constant.AdminIdentity || identity == constant.TeacherIdentity {
+				c.Set("userId", userId)
+				c.Set("identity", identity)
+				c.Next()
+				return
+			}
+		}
+
 		if iden == identity {
 			c.Set("userId", userId)
 			c.Set("identity", identity)

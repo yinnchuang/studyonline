@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Score struct {
 	gorm.Model
 	StudentId  uint `json:"student_id" gorm:"not null"`
-	TeacherId  uint `json:"teacher_id" gorm:"not null"`
-	HomeworkId uint `json:"homework_id" gorm:"not null"`
-	Score      int  `json:"score" gorm:"not null"`
+	UsualScore int  `json:"usual_score" gorm:"not null"`
+	ExamScore  int  `json:"exam_score" gorm:"not null"`
+	FinalScore int  `json:"final_score" gorm:"not null"`
 }

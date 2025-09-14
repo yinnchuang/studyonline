@@ -7,11 +7,11 @@ import (
 )
 
 type ScoreResultVO struct {
-	Name          string `json:"name"`
-	StudentID     uint   `json:"student_id"`
-	HomeworkTitle string `json:"homework_title"`
-	HomeworkId    uint   `json:"homework_id"`
-	Score         int    `json:"score"`
+	Name       string `json:"name"`
+	StudentID  uint   `json:"student_id"`
+	UsualScore int    `json:"usual_score"`
+	ExamScore  int    `json:"exam_score"`
+	FinalScore int    `json:"final_score"`
 }
 
 func GetScoreByStudentId(c context.Context, studentId uint) ([]ScoreResultVO, error) {
@@ -19,36 +19,13 @@ func GetScoreByStudentId(c context.Context, studentId uint) ([]ScoreResultVO, er
 	err := mysql.DB.Model(&entity.Score{}).
 		Select(`
 		students.name,
-        scores.student_id, 
-        scores.homework_id, 
-        scores.score, 
-        homeworks.title as homework_title,
+        scores.student_id,
+        scores.usual_score,
+		scores.exam_score,
+		scores.final_score
     `).
-		Joins("JOIN homeworks ON scores.homework_id = homeworks.id").
 		Joins("JOIN students ON scores.student_id = students.id").
-		Order("scores.homework_id").
 		Where("scores.student_id = ?", studentId).
-		Find(&results).Error
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
-}
-
-func GetScoreByHomeworkId(c context.Context, homeworkId uint) ([]ScoreResultVO, error) {
-	var results []ScoreResultVO
-	err := mysql.DB.Model(&entity.Score{}).
-		Select(`
-		students.name,
-        scores.student_id, 
-        scores.homework_id, 
-        scores.score, 
-        homeworks.title as homework_title,
-    `).
-		Joins("JOIN homeworks ON scores.homework_id = homeworks.id").
-		Joins("JOIN students ON scores.student_id = students.id").
-		Order("scores.homework_id").
-		Where("scores.homework_id = ?", homeworkId).
 		Find(&results).Error
 	if err != nil {
 		return nil, err
@@ -61,14 +38,12 @@ func GetAllScore(c context.Context) ([]ScoreResultVO, error) {
 	err := mysql.DB.Model(&entity.Score{}).
 		Select(`
 		students.name,
-        scores.student_id, 
-        scores.homework_id, 
-        scores.score, 
-        homeworks.title as homework_title,
+        scores.student_id,
+        scores.usual_score,
+		scores.exam_score,
+		scores.final_score
     `).
-		Joins("JOIN homeworks ON scores.homework_id = homeworks.id").
 		Joins("JOIN students ON scores.student_id = students.id").
-		Order("scores.homework_id").
 		Find(&results).Error
 	if err != nil {
 		return nil, err

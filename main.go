@@ -11,7 +11,6 @@ import (
 	"studyonline/handler/middleware"
 	"studyonline/handler/resource"
 	"studyonline/handler/score"
-	"studyonline/handler/submission"
 	"studyonline/handler/unit"
 	"studyonline/handler/user"
 	minit "studyonline/init"
@@ -45,7 +44,7 @@ func main() {
 	// 管理员导入
 	v1 := r.Group("/admin")
 	{
-		v1.GET("/list/student", middleware.Auth(constant.AdminIdentity), admin.ListStudent)
+		v1.GET("/list/student", middleware.Auth(constant.CommonIdentity), admin.ListStudent)
 		v1.GET("/list/teacher", middleware.Auth(constant.AdminIdentity), admin.ListTeacher)
 		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
 		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
@@ -91,20 +90,19 @@ func main() {
 		v6.POST("/create", middleware.Auth(constant.TeacherIdentity), homework.CreateHomework)
 		v6.POST("/delete", middleware.Auth(constant.TeacherIdentity), homework.RemoveHomework)
 	}
-	// 学生的提交
-	v7 := r.Group("/submission")
-	{
-		v7.GET("/list/by/homeworkId", middleware.Auth(constant.CommonIdentity), submission.ListSubmissionByHomeworkId)
-		v7.POST("/upload", middleware.Auth(constant.StudentIdentity), submission.UploadSubmission)
-		v7.POST("/create", middleware.Auth(constant.StudentIdentity), submission.CreateSubmission)
-		v7.POST("/delete", middleware.Auth(constant.StudentIdentity), submission.RemoveSubmission)
-	}
+	//// 学生的提交
+	//v7 := r.Group("/submission")
+	//{
+	//	v7.GET("/list/by/homeworkId", middleware.Auth(constant.CommonIdentity), submission.ListSubmissionByHomeworkId)
+	//	v7.POST("/upload", middleware.Auth(constant.StudentIdentity), submission.UploadSubmission)
+	//	v7.POST("/create", middleware.Auth(constant.StudentIdentity), submission.CreateSubmission)
+	//	v7.POST("/delete", middleware.Auth(constant.StudentIdentity), submission.RemoveSubmission)
+	//}
 	// 分数
 	v8 := r.Group("/score")
 	{
 		// 给教师调用
 		v8.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
-		v8.GET("/list/by/homeworkId", middleware.Auth(constant.TeacherIdentity), score.GetScoreByHomeworkId)
 		v8.POST("/create", middleware.Auth(constant.TeacherIdentity), score.CreateScore)
 		// 根据studentId展示，给student调用
 		v8.GET("/list/by/studentId", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
