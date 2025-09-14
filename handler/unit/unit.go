@@ -1,11 +1,12 @@
 package unit
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"studyonline/dao/entity"
 	"studyonline/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllUnit(c *gin.Context) {
@@ -50,8 +51,9 @@ func RemoveUnit(c *gin.Context) {
 }
 
 type CreateUnitDTO struct {
-	UnitName string `json:"unit_name" binding:"required"`
-	UnitDesc string `json:"unit_desc"`
+	UnitName     string `json:"unit_name" binding:"required"`
+	UnitDesc     string `json:"unit_desc"`
+	FatherUnitId uint   `json:"father_unit_id" binding:"required"`
 }
 
 func CreateUnit(c *gin.Context) {
@@ -63,8 +65,9 @@ func CreateUnit(c *gin.Context) {
 		return
 	}
 	unit := entity.Unit{
-		UnitName: createUnitDTO.UnitName,
-		UnitDesc: createUnitDTO.UnitDesc,
+		UnitName:     createUnitDTO.UnitName,
+		UnitDesc:     createUnitDTO.UnitDesc,
+		FatherUnitId: createUnitDTO.FatherUnitId,
 	}
 	err := service.CreateUnit(c, unit)
 	if err != nil {
