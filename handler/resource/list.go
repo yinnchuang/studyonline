@@ -10,7 +10,7 @@ import (
 )
 
 func ListResource(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "3")
+	limitStr := c.DefaultQuery("limit", "-1")
 	pageStr := c.DefaultQuery("page", "0")
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
@@ -40,7 +40,7 @@ func ListResourceByCategory(c *gin.Context) {
 	categoryStr := c.DefaultQuery("category", "-1")
 	category, _ := strconv.Atoi(categoryStr)
 
-	limitStr := c.DefaultQuery("limit", "3")
+	limitStr := c.DefaultQuery("limit", "-1")
 	pageStr := c.DefaultQuery("page", "0")
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
@@ -90,7 +90,7 @@ func ListResourceByUnit(c *gin.Context) {
 		return
 	}
 
-	limitStr := c.DefaultQuery("limit", "3")
+	limitStr := c.DefaultQuery("limit", "-1")
 	pageStr := c.DefaultQuery("page", "0")
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)

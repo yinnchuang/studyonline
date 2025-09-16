@@ -13,6 +13,7 @@ var (
 	ComputerVision  = 2002
 	NaturalLanguage = 2003
 	DataProcess     = 2004
+	OtherDataset    = 2005
 )
 
 func IfResourceCategory(code int) bool {
@@ -20,5 +21,5 @@ func IfResourceCategory(code int) bool {
 }
 
 func IfDatasetCategory(code int) bool {
-	return code == LLMApplication || code == ComputerVision || code == NaturalLanguage || code == DataProcess
+	return code == LLMApplication || code == ComputerVision || code == NaturalLanguage || code == DataProcess || code == OtherDataset
 }
