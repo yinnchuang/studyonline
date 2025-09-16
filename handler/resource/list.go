@@ -82,7 +82,7 @@ type ListResourceByUnitDTO struct {
 
 func ListResourceByUnit(c *gin.Context) {
 	var listResourceByUnitDTO ListResourceByUnitDTO
-	err := c.ShouldBind(&listResourceByUnitDTO)
+	err := c.ShouldBindJSON(&listResourceByUnitDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
