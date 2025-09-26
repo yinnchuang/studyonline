@@ -1,11 +1,12 @@
 package permission
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"strings"
 	"studyonline/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PermissionVO struct {
@@ -36,6 +37,33 @@ func ListPermissionsByDatasetId(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 		"data":    permissionVOs,
+	})
+}
+
+type RequestPermissionByDatasetIdDTO struct {
+	DatasetId uint `json:"dataset_id"`
+}
+
+func RequestPermissionByDatasetId(c *gin.Context) {
+	var requestPermissionByDatasetIdDTO RequestPermissionByDatasetIdDTO
+	err := c.ShouldBindJSON(&requestPermissionByDatasetIdDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	err = service.SetNeedAuthPermission(c, requestPermissionByDatasetIdDTO.DatasetId, userId, identity)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
 	})
 }
 
