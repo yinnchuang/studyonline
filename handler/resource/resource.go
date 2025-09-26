@@ -54,7 +54,11 @@ func UploadAndCreateResource(c *gin.Context) {
 	// 3. 保存文件到服务器（不暴露给前端的内部路径）
 	ext := filepath.Ext(file.Filename)
 	fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	filePath := filepath.Join("./static/resource", fileName)
+
+	now := time.Now()
+	yearMonth := now.Format("200601")
+
+	filePath := filepath.Join(fmt.Sprintf("./static/resource/%s", yearMonth), fileName)
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "文件保存失败",
@@ -64,7 +68,7 @@ func UploadAndCreateResource(c *gin.Context) {
 
 	ext = filepath.Ext(cover.Filename)
 	coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	coverPath := filepath.Join("./static/cover", coverName)
+	coverPath := filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
 	if err := c.SaveUploadedFile(cover, coverPath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "封面保存失败",

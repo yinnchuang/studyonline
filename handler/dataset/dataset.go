@@ -53,9 +53,12 @@ func UploadAndCreateDataset(c *gin.Context) {
 	}
 
 	// 3. 保存文件到服务器（内部路径，不暴露给前端）
+	now := time.Now()
+	yearMonth := now.Format("200601")
+
 	ext := filepath.Ext(file.Filename)
 	fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	filePath := filepath.Join("./static/resource", fileName)
+	filePath := filepath.Join(fmt.Sprintf("./static/dataset/%s", yearMonth), fileName)
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "数据集文件保存失败",
@@ -65,7 +68,7 @@ func UploadAndCreateDataset(c *gin.Context) {
 
 	ext = filepath.Ext(cover.Filename)
 	coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	coverPath := filepath.Join("./static/cover", coverName)
+	coverPath := filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
 	if err := c.SaveUploadedFile(cover, coverPath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "封面图片保存失败",
