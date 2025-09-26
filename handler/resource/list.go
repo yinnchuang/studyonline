@@ -9,6 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ListResourceVO struct {
+	ID          uint        `json:"id"`
+	Name        string      `json:"name"`
+	CategoryID  int         `json:"category_id"`
+	Description string      `json:"description,omitempty"`
+	Units       interface{} `json:"unit_ids"`
+}
+
 func ListResource(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "-1")
 	pageStr := c.DefaultQuery("page", "0")
@@ -16,6 +24,19 @@ func ListResource(c *gin.Context) {
 	page, _ := strconv.Atoi(pageStr)
 	offset := page * limit
 	resourceWithLimitOffset, err := service.ListResourceWithLimitOffset(c, limit, offset)
+
+	// 不返回文件路径
+	listResourceVOs := []ListResourceVO{}
+	for _, item := range resourceWithLimitOffset {
+		listResourceVOs = append(listResourceVOs, ListResourceVO{
+			ID:          item.ID,
+			Name:        item.Name,
+			CategoryID:  item.CategoryID,
+			Description: item.Description,
+			Units:       item.Units,
+		})
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -31,7 +52,7 @@ func ListResource(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    resourceWithLimitOffset,
+		"data":    listResourceVOs,
 		"total":   total,
 	})
 }
@@ -62,6 +83,19 @@ func ListResourceByCategory(c *gin.Context) {
 		return
 	}
 	total, err := service.CountResourceWithCategory(c, category)
+
+	// 不返回文件路径
+	listResourceVOs := []ListResourceVO{}
+	for _, item := range resourceWithCategory {
+		listResourceVOs = append(listResourceVOs, ListResourceVO{
+			ID:          item.ID,
+			Name:        item.Name,
+			CategoryID:  item.CategoryID,
+			Description: item.Description,
+			Units:       item.Units,
+		})
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -70,7 +104,7 @@ func ListResourceByCategory(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    resourceWithCategory,
+		"data":    listResourceVOs,
 		"total":   total,
 	})
 

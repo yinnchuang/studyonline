@@ -45,3 +45,11 @@ func List(ctx context.Context, identity int) (interface{}, error) {
 	}
 	return nil, nil
 }
+
+func DeleteStudent(ctx context.Context, studentId uint) error {
+	return mysql.DB.Delete(&entity.Student{}, studentId).Error
+}
+
+func DeleteTeacher(ctx context.Context, teacherId uint) error {
+	return mysql.DB.Delete(&entity.Teacher{}, teacherId).Error
+}

@@ -103,3 +103,12 @@ func CreateResource(ctx context.Context, name string, categoryId int, descriptio
 	}
 	return nil
 }
+
+func GetResourceByID(ctx context.Context, id uint) (*entity.Resource, error) {
+	var resource entity.Resource
+	err := mysql.DB.First(&resource, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &resource, nil
+}

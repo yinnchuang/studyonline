@@ -37,3 +37,11 @@ func GetTeacherInfo(id uint) (*GetUserInfoVO, error) {
 	}
 	return &result, nil
 }
+
+func ChangeStudentPassword(studentId uint, password string) error {
+	return mysql.DB.Model(&entity.Student{}).Where("id = ?", studentId).Update("password", password).Error
+}
+
+func ChangeTeacherPassword(teacherId uint, password string) error {
+	return mysql.DB.Model(&entity.Teacher{}).Where("id = ?", teacherId).Update("password", password).Error
+}

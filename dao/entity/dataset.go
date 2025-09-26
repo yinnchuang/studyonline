@@ -10,4 +10,6 @@ type Dataset struct {
 	Scale       string `json:"scale"`
 	FilePath    string `json:"file_path"`
 	CoverPath   string `json:"cover_path"`
+	Private     bool   `json:"private"`
+	TeacherId   uint   `json:"teacher_id"`
 }

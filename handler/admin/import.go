@@ -102,9 +102,60 @@ func ListTeacher(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 		"data":    teachers,
+	})
+}
+
+type DeleteStudentDTO struct {
+	StudentId uint `json:"student_id"`
+}
+
+func DeleteStudent(c *gin.Context) {
+	var deleteStudentDTO DeleteStudentDTO
+	err := c.ShouldBind(&deleteStudentDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	err = service.DeleteStudent(c, deleteStudentDTO.StudentId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
+
+type DeleteTeacherDTO struct {
+	TeacherId uint `json:"teacher_id"`
+}
+
+func DeleteTeacher(c *gin.Context) {
+	var deleteTeacherDTO DeleteTeacherDTO
+	err := c.ShouldBind(&deleteTeacherDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	err = service.DeleteTeacher(c, deleteTeacherDTO.TeacherId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
 	})
 }

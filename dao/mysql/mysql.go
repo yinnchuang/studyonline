@@ -38,9 +38,8 @@ func Init() {
 	db.AutoMigrate(&entity.Dataset{})
 	db.AutoMigrate(&entity.Score{})
 	db.AutoMigrate(&entity.Unit{})
-	db.AutoMigrate(&entity.Announcement{})
 	db.AutoMigrate(&entity.Homework{})
-	db.AutoMigrate(&entity.Submission{})
 	db.AutoMigrate(&entity.Discuss{})
+	db.AutoMigrate(&entity.Permission{})
 	DB = db
 }

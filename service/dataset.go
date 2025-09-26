@@ -4,7 +4,18 @@ import (
 	"context"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+
+	"github.com/gin-gonic/gin"
 )
+
+func ListDatasetByTeacherId(c *gin.Context, teacherId uint) ([]entity.Dataset, error) {
+	var datasets []entity.Dataset
+	err := mysql.DB.Model(&entity.Dataset{}).Where("teacher_id = ?", teacherId).Find(&datasets).Error
+	if err != nil {
+		return nil, err
+	}
+	return datasets, nil
+}
 
 func ListDatasetWithLimitOffset(ctx context.Context, limit int, offset int) ([]entity.Dataset, error) {
 	var datasets []entity.Dataset
@@ -42,7 +53,7 @@ func CountDatasetWithCategory(ctx context.Context, category int) (int64, error) 
 	return count, nil
 }
 
-func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, scale string) error {
+func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, scale string, teacherId uint, private bool) (*entity.Dataset, error) {
 	dataset := entity.Dataset{
 		Name:        name,
 		CategoryID:  categoryId,
@@ -50,10 +61,21 @@ func CreateDataset(ctx context.Context, name string, categoryId int, description
 		Scale:       scale,
 		FilePath:    filePath,
 		CoverPath:   coverPath,
+		TeacherId:   teacherId,
+		Private:     private,
 	}
 	err := mysql.DB.Create(&dataset).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &dataset, nil
+}
+
+func GetDatasetByID(ctx context.Context, id uint) (*entity.Dataset, error) {
+	var dataset entity.Dataset
+	err := mysql.DB.First(&dataset, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &dataset, nil
 }
