@@ -86,6 +86,7 @@ func main() {
 	{
 		v5.GET("/list", middleware.Auth(constant.TeacherIdentity), permission.ListPermissionsByDatasetId)
 		v5.GET("/create", middleware.Auth(constant.TeacherIdentity), permission.CreatePermission)
+		v5.POST("/request", middleware.Auth(constant.CommonIdentity), permission.RequestPermissionByDatasetId)
 	}
 	//// 公告
 	//v5 := r.Group("/announcement")
