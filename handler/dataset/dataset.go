@@ -104,7 +104,7 @@ func UploadAndCreateDataset(c *gin.Context) {
 		})
 		return
 	}
-	err = service.CreatePermission(userId, identity, dataset.ID, dataset.TeacherId)
+	err = service.CreatePermission(c, userId, identity, dataset.ID, dataset.TeacherId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "请求失败",

@@ -14,14 +14,24 @@ func IfUserHasDatasetPermission(userId uint, identity int, datasetId uint) bool 
 	return count > 0
 }
 
-func CreatePermission(userId uint, identity int, datasetId uint, teacherId uint) error {
+func CreatePermission(ctx context.Context, userId uint, identity int, datasetId uint, teacherId uint) error {
 	permission := entity.Permission{
 		UserID:    userId,
 		DatasetId: datasetId,
 		Identity:  identity,
 		TeacherId: teacherId,
 	}
-	return mysql.DB.Create(&permission).Error
+	err := mysql.DB.Create(&permission).Error
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("permission:%d", datasetId)
+	value := fmt.Sprintf("%d_%d", userId, identity)
+	_, err = redis.RDB.SRem(ctx, key, value).Result()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func ListNeedAuthPermission(ctx context.Context, datasetId uint) ([]string, error) {

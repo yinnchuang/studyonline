@@ -82,7 +82,7 @@ func CreatePermission(c *gin.Context) {
 		return
 	}
 	teacherId := c.GetUint("userId")
-	err := service.CreatePermission(createPermissionDTO.UserId, createPermissionDTO.Identity,
+	err := service.CreatePermission(c, createPermissionDTO.UserId, createPermissionDTO.Identity,
 		createPermissionDTO.DatasetId, teacherId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
