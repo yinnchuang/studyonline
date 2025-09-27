@@ -12,4 +12,5 @@ type Dataset struct {
 	CoverPath   string `json:"cover_path"`
 	Private     bool   `json:"private"`
 	TeacherId   uint   `json:"teacher_id"`
+	Url         string `json:"url"`
 }

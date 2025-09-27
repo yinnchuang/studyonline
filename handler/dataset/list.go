@@ -17,6 +17,7 @@ type ListDatasetVO struct {
 	Description string `json:"description,omitempty"`
 	Scale       string `json:"scale"`
 	Private     bool   `json:"private"`
+	Url         string `json:"url"`
 }
 
 func ListDataset(c *gin.Context) {
@@ -36,6 +37,7 @@ func ListDataset(c *gin.Context) {
 			Description: item.Description,
 			Scale:       item.Scale,
 			Private:     item.Private,
+			Url:         item.Url,
 		})
 	}
 
@@ -103,6 +105,7 @@ func ListDatasetByCategory(c *gin.Context) {
 			Description: item.Description,
 			Scale:       item.Scale,
 			Private:     item.Private,
+			Url:         item.Url,
 		})
 	}
 
@@ -134,6 +137,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 			Description: item.Description,
 			Scale:       item.Scale,
 			Private:     item.Private,
+			Url:         item.Url,
 		})
 	}
 

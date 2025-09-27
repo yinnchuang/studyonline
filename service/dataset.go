@@ -53,7 +53,7 @@ func CountDatasetWithCategory(ctx context.Context, category int) (int64, error) 
 	return count, nil
 }
 
-func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, scale string, teacherId uint, private bool) (*entity.Dataset, error) {
+func CreateDataset(ctx context.Context, name string, categoryId int, description string, filePath string, coverPath string, scale string, teacherId uint, private bool, url string) (*entity.Dataset, error) {
 	dataset := entity.Dataset{
 		Name:        name,
 		CategoryID:  categoryId,
@@ -63,6 +63,7 @@ func CreateDataset(ctx context.Context, name string, categoryId int, description
 		CoverPath:   coverPath,
 		TeacherId:   teacherId,
 		Private:     private,
+		Url:         url,
 	}
 	err := mysql.DB.Create(&dataset).Error
 	if err != nil {

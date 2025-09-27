@@ -1,6 +1,7 @@
 package dataset
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -18,6 +19,7 @@ type CreateDatasetDTO struct {
 	Description string `form:"description"`
 	Scale       string `form:"scale"`
 	Private     bool   `form:"private"`
+	Url         string `form:"url"`
 }
 
 func UploadAndCreateDataset(c *gin.Context) {
@@ -31,7 +33,8 @@ func UploadAndCreateDataset(c *gin.Context) {
 	}
 
 	cover, err := c.FormFile("cover")
-	if err != nil {
+
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "封面图片获取失败",
 		})
@@ -45,7 +48,8 @@ func UploadAndCreateDataset(c *gin.Context) {
 		})
 		return
 	}
-	if cover.Size > constant.MaxCoverSize {
+
+	if cover != nil && cover.Size > constant.MaxCoverSize {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "封面图片过大",
 		})
@@ -66,14 +70,18 @@ func UploadAndCreateDataset(c *gin.Context) {
 		return
 	}
 
-	ext = filepath.Ext(cover.Filename)
-	coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	coverPath := filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
-	if err := c.SaveUploadedFile(cover, coverPath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "封面图片保存失败",
-		})
-		return
+	coverPath := "./static/cover/cover.png"
+
+	if cover != nil {
+		ext = filepath.Ext(cover.Filename)
+		coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		coverPath = filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
+		if err := c.SaveUploadedFile(cover, coverPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "封面图片保存失败",
+			})
+			return
+		}
 	}
 
 	// 4. 获取并验证其他表单数据
@@ -97,6 +105,7 @@ func UploadAndCreateDataset(c *gin.Context) {
 		datasetDTO.Scale,
 		userId,
 		datasetDTO.Private,
+		datasetDTO.Url,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

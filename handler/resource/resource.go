@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -30,13 +31,12 @@ func UploadAndCreateResource(c *gin.Context) {
 	}
 
 	cover, err := c.FormFile("cover")
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
+			"message": "封面获取失败",
 		})
 		return
 	}
-
 	// 2. 验证文件大小
 	if file.Size > constant.MaxResourceSize {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -44,7 +44,7 @@ func UploadAndCreateResource(c *gin.Context) {
 		})
 		return
 	}
-	if cover.Size > constant.MaxCoverSize {
+	if cover != nil && cover.Size > constant.MaxCoverSize {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "封面过大",
 		})
@@ -66,14 +66,18 @@ func UploadAndCreateResource(c *gin.Context) {
 		return
 	}
 
-	ext = filepath.Ext(cover.Filename)
-	coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	coverPath := filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
-	if err := c.SaveUploadedFile(cover, coverPath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "封面保存失败",
-		})
-		return
+	coverPath := "./static/cover/cover.png"
+
+	if cover != nil {
+		ext = filepath.Ext(cover.Filename)
+		coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		coverPath = filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
+		if err := c.SaveUploadedFile(cover, coverPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "封面保存失败",
+			})
+			return
+		}
 	}
 
 	// 4. 获取其他表单数据
