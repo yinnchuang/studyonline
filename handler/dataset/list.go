@@ -6,18 +6,20 @@ import (
 	"strconv"
 	"studyonline/constant"
 	"studyonline/service"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ListDatasetVO struct {
-	ID          uint   `json:"id"`
-	Name        string `json:"name"`
-	CategoryID  int    `json:"category_id"`
-	Description string `json:"description,omitempty"`
-	Scale       string `json:"scale"`
-	Private     bool   `json:"private"`
-	Url         string `json:"url"`
+	ID          uint      `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	Name        string    `json:"name"`
+	CategoryID  int       `json:"category_id"`
+	Description string    `json:"description,omitempty"`
+	Scale       string    `json:"scale"`
+	Private     bool      `json:"private"`
+	Url         string    `json:"url"`
 }
 
 func ListDataset(c *gin.Context) {
@@ -32,6 +34,7 @@ func ListDataset(c *gin.Context) {
 	for _, item := range datasetWithLimitOffset {
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
 			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
 			Name:        item.Name,
 			CategoryID:  item.CategoryID,
 			Description: item.Description,
@@ -100,6 +103,7 @@ func ListDatasetByCategory(c *gin.Context) {
 	for _, item := range datasetWithCategory {
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
 			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
 			Name:        item.Name,
 			CategoryID:  item.CategoryID,
 			Description: item.Description,
@@ -132,6 +136,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 	for _, item := range datasets {
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
 			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
 			Name:        item.Name,
 			CategoryID:  item.CategoryID,
 			Description: item.Description,

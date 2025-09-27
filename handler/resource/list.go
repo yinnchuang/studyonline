@@ -5,12 +5,14 @@ import (
 	"strconv"
 	"studyonline/constant"
 	"studyonline/service"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ListResourceVO struct {
 	ID          uint        `json:"id"`
+	CreatedAt   time.Time   `json:"created_at"`
 	Name        string      `json:"name"`
 	CategoryID  int         `json:"category_id"`
 	Description string      `json:"description,omitempty"`
@@ -30,6 +32,7 @@ func ListResource(c *gin.Context) {
 	for _, item := range resourceWithLimitOffset {
 		listResourceVOs = append(listResourceVOs, ListResourceVO{
 			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
 			Name:        item.Name,
 			CategoryID:  item.CategoryID,
 			Description: item.Description,
@@ -89,6 +92,7 @@ func ListResourceByCategory(c *gin.Context) {
 	for _, item := range resourceWithCategory {
 		listResourceVOs = append(listResourceVOs, ListResourceVO{
 			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
 			Name:        item.Name,
 			CategoryID:  item.CategoryID,
 			Description: item.Description,
@@ -132,6 +136,19 @@ func ListResourceByUnit(c *gin.Context) {
 
 	// 展示特定种类
 	resourceWithUnit, err := service.ListResourceWithUnitLimitOffset(c, limit, offset, listResourceByUnitDTO.UnitIds)
+
+	listResourceVOs := []ListResourceVO{}
+	for _, item := range resourceWithUnit {
+		listResourceVOs = append(listResourceVOs, ListResourceVO{
+			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
+			Name:        item.Name,
+			CategoryID:  item.CategoryID,
+			Description: item.Description,
+			Units:       item.Units,
+		})
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -140,7 +157,7 @@ func ListResourceByUnit(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "请求成功",
-			"data":    resourceWithUnit,
+			"data":    listResourceVOs,
 		})
 	}
 }
