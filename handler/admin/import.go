@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"net/http"
 	"studyonline/constant"
 	"studyonline/dao/entity"
@@ -90,11 +91,13 @@ func ImportTeacher(c *gin.Context) {
 }
 
 func ListStudent(c *gin.Context) {
+	fmt.Println("ListStudent")
 	students, err := service.List(c, constant.StudentIdentity)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",

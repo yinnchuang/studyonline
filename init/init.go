@@ -8,4 +8,5 @@ import (
 func Init() {
 	mysql.Init()
 	redis.Init()
+	//log.Init()
 }

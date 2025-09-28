@@ -7,6 +7,7 @@ import (
 	"strings"
 	"studyonline/constant"
 	"studyonline/dao/redis"
+	"studyonline/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +32,21 @@ func Auth(iden int) gin.HandlerFunc {
 		userId := uint(userId_)
 		identity, _ := strconv.Atoi(identityStr)
 
+		info, err := service.GetUserInfo(userId, identity)
+		if err != nil {
+			log.Println("token认证失败", err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+		}
+
 		log.Println("id为", userId, "的用户，身份为", identity, "正在请求", c.FullPath())
+
+		// 如果是学生或老师，设置
+		if iden == constant.StudentIdentity || iden == constant.TeacherIdentity {
+			c.Set("name", info.Name)
+			c.Set("department", info.Department)
+		}
 
 		if iden == constant.CommonIdentity {
 			c.Set("userId", userId)

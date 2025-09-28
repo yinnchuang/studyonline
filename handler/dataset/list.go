@@ -22,10 +22,11 @@ type ListDatasetVO struct {
 	Url                string    `json:"url"`
 	UploaderName       string    `json:"uploader_name"`
 	UploaderDepartment string    `json:"uploader_department"`
+	DownloadTime       int       `json:"download_time"`
 }
 
 func ListDataset(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "3")
+	limitStr := c.DefaultQuery("limit", "-1")
 	pageStr := c.DefaultQuery("page", "0")
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
@@ -50,6 +51,7 @@ func ListDataset(c *gin.Context) {
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
 			UploaderDepartment: uploader.Department,
+			DownloadTime:       item.DownloadTime,
 		})
 	}
 
@@ -126,6 +128,7 @@ func ListDatasetByCategory(c *gin.Context) {
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
 			UploaderDepartment: uploader.Department,
+			DownloadTime:       item.DownloadTime,
 		})
 	}
 
@@ -166,6 +169,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
 			UploaderDepartment: uploader.Department,
+			DownloadTime:       item.DownloadTime,
 		})
 	}
 

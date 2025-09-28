@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/redis/go-redis/v9 v9.12.1
+	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/crypto v0.41.0
 	gopkg.in/ini.v1 v1.67.0
 	gorm.io/driver/mysql v1.6.0

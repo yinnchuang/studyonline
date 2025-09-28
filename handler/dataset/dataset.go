@@ -162,8 +162,16 @@ func GetDataset(c *gin.Context) {
 		})
 		return
 	}
+
 	// 非私有（公开）数据集
 	if dataset.Private == false {
+		service.PlusDatasetDownloadTime(c, uint(datasetId))
+
+		// 日志
+		name := c.GetString("name")
+		department := c.GetString("department")
+		service.AddLog(c, name, department, dataset.Name)
+
 		c.File(dataset.FilePath)
 		return
 	}
@@ -171,6 +179,13 @@ func GetDataset(c *gin.Context) {
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
 	if service.IfUserHasDatasetPermission(userId, identity, uint(datasetId)) {
+		service.PlusDatasetDownloadTime(c, uint(datasetId))
+
+		// 日志
+		name := c.GetString("name")
+		department := c.GetString("department")
+		service.AddLog(c, name, department, dataset.Name)
+
 		c.File(dataset.FilePath)
 		return
 	} else {

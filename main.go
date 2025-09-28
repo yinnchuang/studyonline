@@ -84,9 +84,16 @@ func main() {
 	// 申请权限
 	v5 := r.Group("/permission")
 	{
-		v5.GET("/list", middleware.Auth(constant.TeacherIdentity), permission.ListPermissionsByDatasetId)
-		v5.POST("/create", middleware.Auth(constant.TeacherIdentity), permission.CreatePermission)
+		// 同意请求
+		v5.POST("/agree", middleware.Auth(constant.TeacherIdentity), permission.AgreePermission)
+		// 拒绝请求
+		v5.POST("/disagree", middleware.Auth(constant.TeacherIdentity), permission.DisagreePermission)
+		// 发起请求
 		v5.POST("/request", middleware.Auth(constant.CommonIdentity), permission.RequestPermissionByDatasetId)
+		// 申请记录
+		v5.GET("/list/request", middleware.Auth(constant.CommonIdentity), permission.ListRequestByUserId)
+		// 审批记录
+		v5.GET("/list/review", middleware.Auth(constant.TeacherIdentity), permission.ListRequestByTeacherId)
 	}
 	//// 公告
 	//v5 := r.Group("/announcement")

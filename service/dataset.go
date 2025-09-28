@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
-
-	"github.com/gin-gonic/gin"
 )
 
 func ListDatasetByTeacherId(c *gin.Context, teacherId uint) ([]entity.Dataset, error) {
@@ -19,6 +19,13 @@ func ListDatasetByTeacherId(c *gin.Context, teacherId uint) ([]entity.Dataset, e
 
 func ListDatasetWithLimitOffset(ctx context.Context, limit int, offset int) ([]entity.Dataset, error) {
 	var datasets []entity.Dataset
+	if limit == -1 {
+		err := mysql.DB.Model(&entity.Dataset{}).Find(&datasets).Error
+		if err != nil {
+			return nil, err
+		}
+		return datasets, nil
+	}
 	err := mysql.DB.Model(&entity.Dataset{}).Order("id DESC").Limit(limit).Offset(offset).Find(&datasets).Error
 	if err != nil {
 		return nil, err
@@ -79,4 +86,10 @@ func GetDatasetByID(ctx context.Context, id uint) (*entity.Dataset, error) {
 		return nil, err
 	}
 	return &dataset, nil
+}
+
+func PlusDatasetDownloadTime(ctx context.Context, datasetId uint) error {
+	return mysql.DB.Model(&entity.Dataset{}).Where("id = ?", datasetId).
+		Update("download_time", gorm.Expr("download_time + ?", 1)).
+		Error
 }

@@ -11,12 +11,13 @@ import (
 )
 
 type ListResourceVO struct {
-	ID          uint        `json:"id"`
-	CreatedAt   time.Time   `json:"created_at"`
-	Name        string      `json:"name"`
-	CategoryID  int         `json:"category_id"`
-	Description string      `json:"description,omitempty"`
-	Units       interface{} `json:"unit_ids"`
+	ID           uint        `json:"id"`
+	CreatedAt    time.Time   `json:"created_at"`
+	Name         string      `json:"name"`
+	CategoryID   int         `json:"category_id"`
+	Description  string      `json:"description,omitempty"`
+	Units        interface{} `json:"unit_ids"`
+	DownloadTime int         `json:"download_time"`
 }
 
 func ListResource(c *gin.Context) {
@@ -31,12 +32,13 @@ func ListResource(c *gin.Context) {
 	listResourceVOs := []ListResourceVO{}
 	for _, item := range resourceWithLimitOffset {
 		listResourceVOs = append(listResourceVOs, ListResourceVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Units:       item.Units,
+			ID:           item.ID,
+			CreatedAt:    item.CreatedAt,
+			Name:         item.Name,
+			CategoryID:   item.CategoryID,
+			Description:  item.Description,
+			Units:        item.Units,
+			DownloadTime: item.DownloadTime,
 		})
 	}
 
@@ -91,12 +93,13 @@ func ListResourceByCategory(c *gin.Context) {
 	listResourceVOs := []ListResourceVO{}
 	for _, item := range resourceWithCategory {
 		listResourceVOs = append(listResourceVOs, ListResourceVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Units:       item.Units,
+			ID:           item.ID,
+			CreatedAt:    item.CreatedAt,
+			Name:         item.Name,
+			CategoryID:   item.CategoryID,
+			Description:  item.Description,
+			Units:        item.Units,
+			DownloadTime: item.DownloadTime,
 		})
 	}
 
@@ -140,12 +143,13 @@ func ListResourceByUnit(c *gin.Context) {
 	listResourceVOs := []ListResourceVO{}
 	for _, item := range resourceWithUnit {
 		listResourceVOs = append(listResourceVOs, ListResourceVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Units:       item.Units,
+			ID:           item.ID,
+			CreatedAt:    item.CreatedAt,
+			Name:         item.Name,
+			CategoryID:   item.CategoryID,
+			Description:  item.Description,
+			Units:        item.Units,
+			DownloadTime: item.DownloadTime,
 		})
 	}
 

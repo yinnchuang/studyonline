@@ -45,6 +45,13 @@ func ChangePassword(c *gin.Context) {
 	identity := c.GetInt("identity")
 	bcryptPassword, _ := util.GetPwd(changePasswordDTO.Password)
 
+	if !util.IsValidPassword(changePasswordDTO.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "密码过于简单",
+		})
+		return
+	}
+
 	if identity == constant.StudentIdentity {
 		err := service.ChangeStudentPassword(userId, string(bcryptPassword))
 		if err != nil {
@@ -62,7 +69,7 @@ func ChangePassword(c *gin.Context) {
 			return
 		}
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})

@@ -148,7 +148,7 @@ func GetResource(c *gin.Context) {
 		})
 		return
 	}
-
+	service.PlusResourceDownloadTime(c, uint(resourceId))
 	// 直接使用gin的File方法返回文件
 	c.File(resource.FilePath)
 }

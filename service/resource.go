@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"gorm.io/gorm"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 )
@@ -111,4 +112,10 @@ func GetResourceByID(ctx context.Context, id uint) (*entity.Resource, error) {
 		return nil, err
 	}
 	return &resource, nil
+}
+
+func PlusResourceDownloadTime(ctx context.Context, resourceId uint) error {
+	return mysql.DB.Model(&entity.Resource{}).Where("id = ?", resourceId).
+		Update("download_time", gorm.Expr("download_time + ?", 1)).
+		Error
 }
