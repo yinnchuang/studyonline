@@ -11,9 +11,10 @@ import (
 )
 
 type ImportStudentDTO struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Name       string `json:"name"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Department string `json:"department"`
 }
 
 func ImportStudent(c *gin.Context) {
@@ -28,12 +29,14 @@ func ImportStudent(c *gin.Context) {
 	name := importStudentDTO.Name
 	username := importStudentDTO.Username
 	password := importStudentDTO.Password
+	department := importStudentDTO.Department
 
 	bcryptPassword, _ := util.GetPwd(password)
 	stu := entity.Student{
-		Name:     name,
-		Username: username,
-		Password: string(bcryptPassword),
+		Name:       name,
+		Username:   username,
+		Password:   string(bcryptPassword),
+		Department: department,
 	}
 	err = service.Import(c, stu, constant.StudentIdentity)
 	if err != nil {
@@ -48,9 +51,10 @@ func ImportStudent(c *gin.Context) {
 }
 
 type ImportTeacherDTO struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Name       string `json:"name"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Department string `json:"department"`
 }
 
 func ImportTeacher(c *gin.Context) {
@@ -64,12 +68,14 @@ func ImportTeacher(c *gin.Context) {
 	name := importTeacherDTO.Name
 	username := importTeacherDTO.Username
 	password := importTeacherDTO.Password
+	department := importTeacherDTO.Department
 
 	bcryptPassword, _ := util.GetPwd(password)
 	tea := entity.Teacher{
-		Name:     name,
-		Username: username,
-		Password: string(bcryptPassword),
+		Name:       name,
+		Username:   username,
+		Password:   string(bcryptPassword),
+		Department: department,
 	}
 	err = service.Import(c, tea, constant.TeacherIdentity)
 	if err != nil {

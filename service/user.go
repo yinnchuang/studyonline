@@ -7,8 +7,9 @@ import (
 )
 
 type GetUserInfoVO struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
+	Name       string `json:"name"`
+	Username   string `json:"username"`
+	Department string `json:"department"`
 }
 
 func GetUserInfo(userId uint, identity int) (*GetUserInfoVO, error) {

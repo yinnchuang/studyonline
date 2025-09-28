@@ -41,5 +41,6 @@ func Init() {
 	db.AutoMigrate(&entity.Homework{})
 	db.AutoMigrate(&entity.Discuss{})
 	db.AutoMigrate(&entity.Permission{})
+	db.AutoMigrate(&entity.Request{})
 	DB = db
 }

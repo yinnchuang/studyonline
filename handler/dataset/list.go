@@ -12,14 +12,16 @@ import (
 )
 
 type ListDatasetVO struct {
-	ID          uint      `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	Name        string    `json:"name"`
-	CategoryID  int       `json:"category_id"`
-	Description string    `json:"description,omitempty"`
-	Scale       string    `json:"scale"`
-	Private     bool      `json:"private"`
-	Url         string    `json:"url"`
+	ID                 uint      `json:"id"`
+	CreatedAt          time.Time `json:"created_at"`
+	Name               string    `json:"name"`
+	CategoryID         int       `json:"category_id"`
+	Description        string    `json:"description,omitempty"`
+	Scale              string    `json:"scale"`
+	Private            bool      `json:"private"`
+	Url                string    `json:"url"`
+	UploaderName       string    `json:"uploader_name"`
+	UploaderDepartment string    `json:"uploader_department"`
 }
 
 func ListDataset(c *gin.Context) {
@@ -32,15 +34,22 @@ func ListDataset(c *gin.Context) {
 
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasetWithLimitOffset {
+		uploader, err := service.GetTeacherInfo(item.TeacherId)
+		if err != nil {
+			continue
+		}
+
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Scale:       item.Scale,
-			Private:     item.Private,
-			Url:         item.Url,
+			ID:                 item.ID,
+			CreatedAt:          item.CreatedAt,
+			Name:               item.Name,
+			CategoryID:         item.CategoryID,
+			Description:        item.Description,
+			Scale:              item.Scale,
+			Private:            item.Private,
+			Url:                item.Url,
+			UploaderName:       uploader.Name,
+			UploaderDepartment: uploader.Department,
 		})
 	}
 
@@ -101,15 +110,22 @@ func ListDatasetByCategory(c *gin.Context) {
 	fmt.Println(total)
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasetWithCategory {
+		uploader, err := service.GetTeacherInfo(item.TeacherId)
+		if err != nil {
+			continue
+		}
+
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Scale:       item.Scale,
-			Private:     item.Private,
-			Url:         item.Url,
+			ID:                 item.ID,
+			CreatedAt:          item.CreatedAt,
+			Name:               item.Name,
+			CategoryID:         item.CategoryID,
+			Description:        item.Description,
+			Scale:              item.Scale,
+			Private:            item.Private,
+			Url:                item.Url,
+			UploaderName:       uploader.Name,
+			UploaderDepartment: uploader.Department,
 		})
 	}
 
@@ -134,15 +150,22 @@ func ListDatasetByTeacherId(c *gin.Context) {
 
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasets {
+		uploader, err := service.GetTeacherInfo(item.TeacherId)
+		if err != nil {
+			continue
+		}
+
 		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
-			ID:          item.ID,
-			CreatedAt:   item.CreatedAt,
-			Name:        item.Name,
-			CategoryID:  item.CategoryID,
-			Description: item.Description,
-			Scale:       item.Scale,
-			Private:     item.Private,
-			Url:         item.Url,
+			ID:                 item.ID,
+			CreatedAt:          item.CreatedAt,
+			Name:               item.Name,
+			CategoryID:         item.CategoryID,
+			Description:        item.Description,
+			Scale:              item.Scale,
+			Private:            item.Private,
+			Url:                item.Url,
+			UploaderName:       uploader.Name,
+			UploaderDepartment: uploader.Department,
 		})
 	}
 

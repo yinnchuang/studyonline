@@ -52,3 +52,7 @@ func SetNeedAuthPermission(ctx context.Context, datasetId uint, userId uint, ide
 	}
 	return nil
 }
+
+func CreateRequest(ctx context.Context, datasetId uint, userId uint, identity int) error {
+	
+}
