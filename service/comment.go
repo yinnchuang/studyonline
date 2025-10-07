@@ -2,10 +2,18 @@ package service
 
 import (
 	"context"
-	"errors"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 )
+
+func GetCommentById(c context.Context, id uint) (*entity.Comment, error) {
+	var comment entity.Comment
+	err := mysql.DB.Where("id = ?", id).First(&comment).Error
+	if err != nil {
+		return nil, err
+	}
+	return &comment, nil
+}
 
 func GetCommentByDiscussId(c context.Context, discussId uint) ([]entity.Comment, error) {
 	var comments []entity.Comment
@@ -21,15 +29,7 @@ func CreateComment(c context.Context, comment entity.Comment) error {
 	return err
 }
 
-func RemoveComment(c context.Context, id uint, userId uint) error {
-	var comment entity.Comment
-	err := mysql.DB.Model(&entity.Comment{}).Where("id = ?", id).Find(&comment).Error
-	if err != nil {
-		return err
-	}
-	if comment.UserId != userId {
-		return errors.New("dont match user id")
-	}
-	err = mysql.DB.Model(&entity.Comment{}).Delete(&entity.Comment{}, id).Error
+func RemoveComment(c context.Context, id uint) error {
+	err := mysql.DB.Model(&entity.Comment{}).Delete(&entity.Comment{}, id).Error
 	return err
 }

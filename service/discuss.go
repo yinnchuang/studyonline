@@ -4,7 +4,18 @@ import (
 	"context"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+
+	"github.com/gin-gonic/gin"
 )
+
+func GetDiscuss(c *gin.Context, id uint) (*entity.Discuss, error) {
+	var discuss entity.Discuss
+	err := mysql.DB.Model(&entity.Discuss{}).Where("id = ?", id).Find(&discuss).Error
+	if err != nil {
+		return nil, err
+	}
+	return &discuss, nil
+}
 
 func GetAllDiscusses(c context.Context) ([]entity.Discuss, error) {
 	var discusses []entity.Discuss
