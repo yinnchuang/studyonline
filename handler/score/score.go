@@ -8,32 +8,75 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ScoreVO struct {
+	ID         uint   `json:"id"`
+	Name       string `json:"name"`
+	UserName   string `json:"user_name"`
+	Department string `json:"department"`
+	UsualScore int    `json:"usual_score"`
+	ExamScore  int    `json:"exam_score"`
+	FinalScore int    `json:"final_score"`
+}
+
 func GetScoreByStudentId(c *gin.Context) {
 	studentId := c.GetUint("userId")
-	results, err := service.GetScoreByStudentId(c, studentId)
+	score, err := service.GetScoreByStudentId(c, studentId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
+	studentInfo, err := service.GetStudentInfo(studentId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	scoreVO := ScoreVO{
+		ID:         score.ID,
+		Name:       studentInfo.Name,
+		UserName:   studentInfo.Username,
+		Department: studentInfo.Department,
+		UsualScore: score.UsualScore,
+		ExamScore:  score.ExamScore,
+		FinalScore: score.FinalScore,
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    results,
+		"data":    scoreVO,
 	})
 }
 
 func GetAllScore(c *gin.Context) {
-	results, err := service.GetAllScore(c)
+	scores, err := service.GetAllScore(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
+	var scoreVOs []ScoreVO
+	for _, item := range scores {
+		studentInfo, err := service.GetStudentInfo(item.StudentId)
+		if err != nil {
+			continue
+		}
+		scoreVOs = append(scoreVOs, ScoreVO{
+			ID:         item.ID,
+			Name:       studentInfo.Name,
+			UserName:   studentInfo.Username,
+			Department: studentInfo.Department,
+			UsualScore: item.UsualScore,
+			ExamScore:  item.ExamScore,
+			FinalScore: item.FinalScore,
+		})
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    results,
+		"data":    scoreVOs,
 	})
 }
 

@@ -6,49 +6,22 @@ import (
 	"studyonline/dao/mysql"
 )
 
-type ScoreResultVO struct {
-	Name       string `json:"name"`
-	StudentID  uint   `json:"student_id"`
-	UsualScore int    `json:"usual_score"`
-	ExamScore  int    `json:"exam_score"`
-	FinalScore int    `json:"final_score"`
-}
-
-func GetScoreByStudentId(c context.Context, studentId uint) ([]ScoreResultVO, error) {
-	var results []ScoreResultVO
-	err := mysql.DB.Model(&entity.Score{}).
-		Select(`
-		students.name,
-        scores.student_id,
-        scores.usual_score,
-		scores.exam_score,
-		scores.final_score
-    `).
-		Joins("JOIN students ON scores.student_id = students.id").
-		Where("scores.student_id = ?", studentId).
-		Find(&results).Error
+func GetScoreByStudentId(c context.Context, studentId uint) (*entity.Score, error) {
+	var score entity.Score
+	err := mysql.DB.Model(&entity.Score{}).Where("student_id = ?", studentId).First(&score).Error
 	if err != nil {
 		return nil, err
 	}
-	return results, nil
+	return &score, nil
 }
 
-func GetAllScore(c context.Context) ([]ScoreResultVO, error) {
-	var results []ScoreResultVO
-	err := mysql.DB.Model(&entity.Score{}).
-		Select(`
-		students.name,
-        scores.student_id,
-        scores.usual_score,
-		scores.exam_score,
-		scores.final_score
-    `).
-		Joins("JOIN students ON scores.student_id = students.id").
-		Find(&results).Error
+func GetAllScore(c context.Context) ([]entity.Score, error) {
+	var scores []entity.Score
+	err := mysql.DB.Model(&entity.Score{}).Find(&scores).Error
 	if err != nil {
 		return nil, err
 	}
-	return results, nil
+	return scores, nil
 }
 
 func CreateScore(c context.Context, score entity.Score) error {

@@ -75,3 +75,16 @@
 2025/10/07 19:10:29 id为1的用户，身份为1，正在请求/comment/delete
 2025/10/07 19:10:32 id为1的用户，身份为1，正在请求/comment/list/by/discussId
 2025/10/07 19:10:37 id为1的用户，身份为2，正在请求/comment/list/by/discussId
+2025/10/07 19:37:45 id为1的用户，身份为2，正在请求/score/list
+2025/10/07 19:38:02 id为1的用户，身份为1，正在请求/score/list/by/studentId
+2025/10/07 19:38:06 id为1的用户，身份为1，正在请求/score/list/by/studentId
+2025/10/07 19:38:10 id为1的用户，身份为1，正在请求/score/list
+2025/10/07 19:38:10 token认证失败, %!s(<nil>)
+2025/10/07 19:39:55 id为1的用户，身份为1，正在请求/score/list/by/studentId
+2025/10/07 19:42:23 id为1的用户，身份为1，正在请求/score/list
+2025/10/07 19:42:23 token认证失败, %!s(<nil>)
+2025/10/07 19:42:26 id为1的用户，身份为1，正在请求/score/list/by/studentId
+2025/10/07 19:47:32 id为1的用户，身份为1，正在请求/score/list/by/studentId
+2025/10/07 19:47:43 id为1的用户，身份为3，正在请求/score/list
+2025/10/07 19:47:43 token认证失败, %!s(<nil>)
+2025/10/07 19:47:59 id为1的用户，身份为2，正在请求/score/list
