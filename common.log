@@ -12,3 +12,46 @@
 2025/10/07 15:14:59 token认证失败, redis: nil
 2025/10/07 15:14:59 token认证失败, redis: nil
 2025/10/07 15:14:59 token认证失败, redis: nil
+2025/10/07 15:26:55 id为1的用户，身份为2，正在请求/resource/list/by/unit
+2025/10/07 15:27:01 id为1的用户，身份为2，正在请求/dataset/list/by/category
+2025/10/07 15:33:23 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 15:33:31 id为1的用户，身份为2，正在请求/homework/upload
+2025/10/07 15:35:39 id为1的用户，身份为2，正在请求/homework/upload
+2025/10/07 15:35:44 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:35:48 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 15:39:34 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:42:18 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:42:56 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:42:59 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:43:19 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:43:47 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:44:35 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:45:26 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 15:45:59 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:46:15 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:47:08 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:47:40 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:48:01 id为1的用户，身份为2，正在请求/homework/create
+2025/10/07 15:48:11 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:58:35 token认证失败, redis: nil
+2025/10/07 15:59:00 id为1的用户，身份为2，正在请求/homework/uploadAndCreate
+2025/10/07 15:59:43 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 15:59:52 id为1的用户，身份为2，正在请求/homework/uploadAndCreate
+2025/10/07 16:00:59 id为1的用户，身份为2，正在请求/homework/uploadAndCreate
+2025/10/07 16:01:40 id为1的用户，身份为2，正在请求/homework/uploadAndCreate
+2025/10/07 16:01:48 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 16:03:08 id为1的用户，身份为2，正在请求/homework/uploadAndCreate
+2025/10/07 16:04:34 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 16:08:28 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 16:09:18 id为1的用户，身份为2，正在请求/homework/list
+2025/10/07 16:09:48 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 16:09:53 id为1的用户，身份为2，正在请求/homework/file
+2025/10/07 16:10:08 id为1的用户，身份为2，正在请求/score/list
+2025/10/07 16:10:32 id为1的用户，身份为2，正在请求/score/create
+2025/10/07 16:10:36 id为1的用户，身份为2，正在请求/score/list
+2025/10/07 16:12:54 id为1的用户，身份为2，正在请求/discuss/list
+2025/10/07 16:12:58 id为1的用户，身份为2，正在请求/discuss/create
+2025/10/07 16:13:03 id为1的用户，身份为2，正在请求/comment/create
+2025/10/07 16:14:25 id为1的用户，身份为2，正在请求/comment/create
+2025/10/07 16:14:28 id为1的用户，身份为2，正在请求/discuss/list
+2025/10/07 16:14:33 id为1的用户，身份为2，正在请求/comment/list/by/discussId

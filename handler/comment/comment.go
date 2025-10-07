@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"studyonline/dao/entity"
@@ -42,7 +41,6 @@ func CreateComment(c *gin.Context) {
 	}
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
-	log.Println(userId, identity)
 	userInfo, err := service.GetUserInfo(userId, identity)
 	if err != nil || userInfo == nil {
 		c.JSON(http.StatusBadRequest, gin.H{

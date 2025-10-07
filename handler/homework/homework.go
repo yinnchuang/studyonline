@@ -1,9 +1,11 @@
 package homework
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"studyonline/constant"
 	"studyonline/dao/entity"
 	"studyonline/service"
@@ -11,6 +13,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type ListHomeworkVO struct {
+	ID          uint      `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	ExpireTime  time.Time `json:"expire_time"`
+	Title       string    `json:"title"`
+	Description string    `json:"description,omitempty"`
+}
 
 func ListHomework(c *gin.Context) {
 	homeworks, err := service.GetAllHomework(c)
@@ -20,55 +30,63 @@ func ListHomework(c *gin.Context) {
 		})
 		return
 	}
+	var listHomeworkVOs []ListHomeworkVO
+	for _, item := range homeworks {
+		listHomeworkVOs = append(listHomeworkVOs, ListHomeworkVO{
+			ID:          item.ID,
+			CreatedAt:   item.CreatedAt,
+			ExpireTime:  item.ExpireTime,
+			Title:       item.Title,
+			Description: item.Description,
+		})
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    homeworks,
+		"data":    listHomeworkVOs,
 	})
 }
 
-func UploadHomework(c *gin.Context) {
+type CreateHomeworkDTO struct {
+	Title       string    `form:"title"`
+	Description string    `form:"description"`
+	ExpireTime  time.Time `form:"expire_time"`
+}
+
+func UploadAndCreateHomework(c *gin.Context) {
 	file, err := c.FormFile("file")
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
-	// 判断最大文件大小
-	if file.Size > constant.MaxHomeworkSize {
+	if file != nil && file.Size > constant.MaxHomeworkSize {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "文件过大，不超过200M",
+			"message": "文件过大",
 		})
 		return
 	}
 
-	// 生成新文件名：时间戳 + 扩展名
-	ext := filepath.Ext(file.Filename)
-	newFileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	newFileName = filepath.Join("./static/homework", newFileName)
-	if err := c.SaveUploadedFile(file, newFileName); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "上传失败，稍后重试",
-		})
-		return
+	now := time.Now()
+	yearMonth := now.Format("200601")
+
+	filePath := ""
+
+	if file != nil {
+		ext := filepath.Ext(file.Filename)
+		fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		filePath = filepath.Join(fmt.Sprintf("./static/homework/%s", yearMonth), fileName)
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "文件保存失败",
+			})
+			return
+		}
 	}
-	fileAbsPath, _ := filepath.Abs(newFileName)
-	c.JSON(http.StatusOK, gin.H{
-		"message":  "请求成功",
-		"homework": fileAbsPath,
-	})
-}
 
-type CreateHomeworkDTO struct {
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	FilePath    string    `json:"file_path"`
-	ExpireTime  time.Time `json:"expire_time"`
-}
-
-func CreateHomework(c *gin.Context) {
 	createHomeworkDTO := CreateHomeworkDTO{}
-	err := c.ShouldBindBodyWithJSON(&createHomeworkDTO)
+	err = c.ShouldBind(&createHomeworkDTO)
+	fmt.Println(createHomeworkDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -78,7 +96,7 @@ func CreateHomework(c *gin.Context) {
 	homework := entity.Homework{
 		Title:       createHomeworkDTO.Title,
 		Description: createHomeworkDTO.Description,
-		FilePath:    createHomeworkDTO.FilePath,
+		FilePath:    filePath,
 		ExpireTime:  createHomeworkDTO.ExpireTime,
 	}
 	err = service.CreateHomework(c, homework)
@@ -116,4 +134,21 @@ func RemoveHomework(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
+}
+
+func GetHomework(c *gin.Context) {
+	homeworkIdStr := c.DefaultQuery("homeworkId", "0")
+	homeworkId, _ := strconv.Atoi(homeworkIdStr)
+
+	homework, err := service.GetHomeworkById(c, uint(homeworkId))
+
+	if err != nil || homework.FilePath == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.File(homework.FilePath)
+	return
 }

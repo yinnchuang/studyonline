@@ -111,9 +111,9 @@ func main() {
 	v6 := r.Group("/homework")
 	{
 		v6.GET("/list", middleware.Auth(constant.CommonIdentity), homework.ListHomework)
-		v6.POST("/upload", middleware.Auth(constant.TeacherIdentity), homework.UploadHomework)
-		v6.POST("/create", middleware.Auth(constant.TeacherIdentity), homework.CreateHomework)
+		v6.POST("/uploadAndCreate", middleware.Auth(constant.TeacherIdentity), homework.UploadAndCreateHomework)
 		v6.POST("/delete", middleware.Auth(constant.TeacherIdentity), homework.RemoveHomework)
+		v6.GET("/file", middleware.Auth(constant.CommonIdentity), homework.GetHomework)
 	}
 	//// 学生的提交
 	//v7 := r.Group("/submission")
