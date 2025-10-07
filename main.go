@@ -15,6 +15,7 @@ import (
 	"studyonline/handler/unit"
 	"studyonline/handler/user"
 	minit "studyonline/init"
+	"studyonline/log"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -26,6 +27,9 @@ func init() {
 }
 
 func main() {
+	defer log.DownloadLogger.Close() // 关闭log日志
+	defer log.CommonLogger.Close()
+
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"}, // 也可写具体前端地址
@@ -35,6 +39,7 @@ func main() {
 		AllowCredentials: true, // 如果带 cookie
 		MaxAge:           12 * time.Hour,
 	}))
+
 	// 登录
 	v0 := r.Group("/login")
 	{
@@ -148,7 +153,7 @@ func main() {
 		v11.POST("/changePassword", middleware.Auth(constant.CommonIdentity), user.ChangePassword)
 	}
 	// 静态资源
-	r.Static("/static", "./static") // 废弃
+	// r.Static("/static", "./static") // 废弃
 
 	r.Run(":8080")
 }

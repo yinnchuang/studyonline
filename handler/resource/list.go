@@ -77,6 +77,7 @@ func ListResourceByCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
+		return
 	}
 
 	// 展示特定种类

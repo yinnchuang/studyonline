@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"studyonline/constant"
+	"studyonline/log"
 	"studyonline/service"
 	"time"
 
@@ -171,6 +172,7 @@ func GetDataset(c *gin.Context) {
 		name := c.GetString("name")
 		department := c.GetString("department")
 		service.AddLog(c, name, department, dataset.Name)
+		log.DownloadLogger.Log(fmt.Sprintf("%s %s %s", name, department, dataset.Name))
 
 		c.File(dataset.FilePath)
 		return
@@ -185,6 +187,7 @@ func GetDataset(c *gin.Context) {
 		name := c.GetString("name")
 		department := c.GetString("department")
 		service.AddLog(c, name, department, dataset.Name)
+		log.DownloadLogger.Log(fmt.Sprintf("%s %s %s", name, department, dataset.Name))
 
 		c.File(dataset.FilePath)
 		return

@@ -1,12 +1,13 @@
 package middleware
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"studyonline/constant"
 	"studyonline/dao/redis"
+	"studyonline/log"
 	"studyonline/service"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +17,10 @@ func Auth(iden int) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
-		log.Println(token)
 		result, err := redis.RDB.Get(c, token).Result()
+
 		if err != nil {
-			log.Println("token认证失败", err)
+			log.CommonLogger.Log(fmt.Sprintf("token认证失败, %s", err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "请求失败",
 			})
@@ -34,16 +35,15 @@ func Auth(iden int) gin.HandlerFunc {
 
 		info, err := service.GetUserInfo(userId, identity)
 		if err != nil {
-			log.Println("token认证失败", err)
+			log.CommonLogger.Log(fmt.Sprintf("token认证失败, %s", err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "请求失败",
 			})
 		}
 
-		log.Println("id为", userId, "的用户，身份为", identity, "正在请求", c.FullPath())
-
-		// 如果是学生或老师，设置
-		if iden == constant.StudentIdentity || iden == constant.TeacherIdentity {
+		log.CommonLogger.Log(fmt.Sprintf("id为%v的用户，身份为%v，正在请求%s", userId, identity, c.FullPath()))
+		// 如果是学生或老师，设置name和department
+		if identity == constant.StudentIdentity || identity == constant.TeacherIdentity {
 			c.Set("name", info.Name)
 			c.Set("department", info.Department)
 		}
@@ -70,7 +70,7 @@ func Auth(iden int) gin.HandlerFunc {
 			c.Next()
 			return
 		} else {
-			log.Println("token认证失败", err)
+			log.CommonLogger.Log(fmt.Sprintf("token认证失败, %s", err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "请求失败",
 			})

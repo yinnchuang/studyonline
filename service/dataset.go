@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func ListDatasetByTeacherId(c *gin.Context, teacherId uint) ([]entity.Dataset, error) {
@@ -88,8 +89,7 @@ func GetDatasetByID(ctx context.Context, id uint) (*entity.Dataset, error) {
 	return &dataset, nil
 }
 
-func PlusDatasetDownloadTime(ctx context.Context, datasetId uint) error {
-	return mysql.DB.Model(&entity.Dataset{}).Where("id = ?", datasetId).
-		Update("download_time", gorm.Expr("download_time + ?", 1)).
-		Error
+func PlusDatasetDownloadTime(ctx context.Context, datasetId uint) {
+	mysql.DB.Model(&entity.Dataset{}).Where("id = ?", datasetId).
+		Update("download_time", gorm.Expr("download_time + ?", 1))
 }
