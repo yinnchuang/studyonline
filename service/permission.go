@@ -91,6 +91,7 @@ func ListRequestByTeacherId(ctx context.Context, teacherId uint) ([]entity.Reque
 
 func AgreeRequest(ctx context.Context, requestId uint, userId uint, identity int, datasetId uint, teacherId uint) error {
 	err := mysql.DB.Transaction(func(tx *gorm.DB) error {
+		tx = tx.Debug()
 		err := tx.Model(&entity.Request{}).Where("id = ?", requestId).Update("status", 1).Error
 		if err != nil {
 			return err
@@ -101,7 +102,12 @@ func AgreeRequest(ctx context.Context, requestId uint, userId uint, identity int
 			DatasetId: datasetId,
 			TeacherId: teacherId,
 		}
-		err = tx.Model(&entity.Permission{}).FirstOrCreate(&permission).Error
+		err = tx.Where(entity.Permission{
+			UserID:    userId,
+			Identity:  identity,
+			DatasetId: datasetId,
+			TeacherId: teacherId,
+		}).FirstOrCreate(&permission).Error
 		if err != nil {
 			return err
 		}
@@ -119,6 +125,22 @@ func DisagreeRequest(ctx context.Context, requestId uint, userId uint, identity 
 		if err != nil {
 			return err
 		}
+		var permission entity.Permission
+		result := tx.Where(entity.Permission{
+			UserID:    userId,
+			Identity:  identity,
+			DatasetId: datasetId,
+			TeacherId: teacherId,
+		}).First(&permission)
+
+		// 如果找到了记录，则删除
+		if result.RowsAffected > 0 {
+			err = tx.Delete(&permission).Error
+			if err != nil {
+				return err
+			}
+		}
+
 		return nil
 	})
 	if err != nil {

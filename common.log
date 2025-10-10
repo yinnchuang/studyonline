@@ -88,3 +88,29 @@
 2025/10/07 19:47:43 id为1的用户，身份为3，正在请求/score/list
 2025/10/07 19:47:43 token认证失败, %!s(<nil>)
 2025/10/07 19:47:59 id为1的用户，身份为2，正在请求/score/list
+2025/10/07 19:49:39 id为1的用户，身份为2，正在请求/user/info
+2025/10/07 19:50:01 id为1的用户，身份为2，正在请求/user/changePassword
+2025/10/07 19:50:17 id为1的用户，身份为2，正在请求/permission/list/review
+2025/10/09 23:58:44 token认证失败, redis: nil
+2025/10/10 20:07:44 id为1的用户，身份为2，正在请求/permission/list/request
+2025/10/10 20:07:47 id为1的用户，身份为2，正在请求/permission/list/review
+2025/10/10 20:08:29 id为1的用户，身份为2，正在请求/dataset/uploadAndCreate
+2025/10/10 20:08:33 id为1的用户，身份为2，正在请求/dataset/list
+2025/10/10 20:08:43 id为1的用户，身份为2，正在请求/dataset/file
+2025/10/10 20:09:17 id为1的用户，身份为3，正在请求/admin/import/teacher
+2025/10/10 20:09:30 id为2的用户，身份为2，正在请求/dataset/file
+2025/10/10 20:09:40 id为2的用户，身份为2，正在请求/permission/request
+2025/10/10 20:10:16 id为1的用户，身份为2，正在请求/permission/list/review
+2025/10/10 20:10:23 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:10:54 id为2的用户，身份为2，正在请求/dataset/file
+2025/10/10 20:12:26 id为2的用户，身份为2，正在请求/dataset/file
+2025/10/10 20:12:44 id为1的用户，身份为2，正在请求/permission/list/review
+2025/10/10 20:12:54 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:13:33 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:15:23 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:17:10 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:17:38 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:26:33 id为1的用户，身份为2，正在请求/permission/agree
+2025/10/10 20:30:22 id为1的用户，身份为2，正在请求/permission/disagree
+2025/10/10 20:30:34 id为1的用户，身份为2，正在请求/permission/list/review
+2025/10/10 20:30:37 id为1的用户，身份为2，正在请求/permission/agree
