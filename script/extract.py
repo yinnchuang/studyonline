@@ -4,6 +4,13 @@ import time
 import pandas as pd
 import requests
 
+username = '20250928'
+password = '20250928'
+loginUrl = f'http://127.0.0.1:8080/login/teacher?username={username}&password={password}'
+resp = requests.Session().post(loginUrl)
+token = resp.json()['token']
+
+
 creatUrl = 'http://127.0.0.1:8080/unit/create'
 
 df = pd.read_excel('units.xlsx',header=0)
@@ -25,7 +32,7 @@ for index, son_unit in son_units.iterrows():
         print(unit_name, idx)
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "bd6fa9c0-7558-44fa-8791-620b5a5c50ed"
+            "Authorization": token
         }
         payload = {
             "unit_name": unit_name,
