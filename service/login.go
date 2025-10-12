@@ -44,9 +44,9 @@ func Login(ctx context.Context, username string, password string, identity int) 
 		return false, "", errors.New("登录失败")
 	}
 	login := util.ComparePwd(passwordFromDB, password)
-	if identity == constant.AdminIdentity {
-		login = password == passwordFromDB
-	}
+	//if identity == constant.AdminIdentity {
+	//	login = password == passwordFromDB
+	//}
 	if login {
 		cacheKey := util.GenerateToken()
 		cacheValue := fmt.Sprintf("%v_%v", idFromDB, identity)

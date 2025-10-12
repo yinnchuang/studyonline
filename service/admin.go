@@ -8,6 +8,22 @@ import (
 	"studyonline/dao/mysql"
 )
 
+func ImportAdmin(ctx context.Context, username string, password string) error {
+	result := mysql.DB.Model(&entity.Admin{}).First(&entity.Admin{})
+	// 如果找到了记录，则返回
+	if result.RowsAffected > 0 {
+		return nil
+	}
+	err := mysql.DB.Model(&entity.Admin{}).Create(&entity.Admin{
+		Username: username,
+		Password: password,
+	}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Import(ctx context.Context, user interface{}, identity int) error {
 	if identity == constant.StudentIdentity {
 		stu := user.(entity.Student)
