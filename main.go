@@ -39,7 +39,7 @@ func main() {
 		AllowCredentials: true, // 如果带 cookie
 		MaxAge:           12 * time.Hour,
 	}))
-	r.Use(middleware.RateLimitByIP())
+	r.Use(middleware.RateLimitGlobal())
 
 	// 登录
 	v0 := r.Group("/login")
