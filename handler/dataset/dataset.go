@@ -197,5 +197,48 @@ func GetDataset(c *gin.Context) {
 		})
 		return
 	}
+}
+
+func GetDatasetPermission(c *gin.Context) {
+	datasetIdStr := c.DefaultQuery("dataset_id", "0")
+	datasetId, _ := strconv.Atoi(datasetIdStr)
+	dataset, err := service.GetDatasetByID(c, uint(datasetId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	if dataset.FilePath == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	// 非私有（公开）数据集
+	if dataset.Private == false {
+		c.JSON(http.StatusOK, gin.H{
+			"message":    "请求成功",
+			"permission": true,
+		})
+		return
+	}
+
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	if service.IfUserHasDatasetPermission(userId, identity, uint(datasetId)) {
+		c.JSON(http.StatusOK, gin.H{
+			"message":    "请求成功",
+			"permission": true,
+		})
+		return
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":    "无下载权限，请申请权限",
+			"permission": false,
+		})
+		return
+	}
 
 }

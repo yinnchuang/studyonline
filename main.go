@@ -79,6 +79,7 @@ func main() {
 		v3.POST("/uploadAndCreate", middleware.Auth(constant.TeacherIdentity), dataset.UploadAndCreateDataset)
 		v3.GET("/cover", middleware.Auth(constant.CommonIdentity), dataset.GetDatasetCover)
 		v3.GET("/file", middleware.Auth(constant.CommonIdentity), dataset.GetDataset)
+		v3.GET("/permission", middleware.Auth(constant.CommonIdentity), dataset.GetDatasetPermission)
 	}
 	// 知识点
 	v4 := r.Group("/unit")
