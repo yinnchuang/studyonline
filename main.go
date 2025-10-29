@@ -1,12 +1,15 @@
 package main
 
 import (
+	"net/http/httputil"
+	"net/url"
 	"studyonline/constant"
 	"studyonline/handler/admin"
 	"studyonline/handler/comment"
 	"studyonline/handler/dataset"
 	"studyonline/handler/discuss"
 	"studyonline/handler/homework"
+	"studyonline/handler/lessonplan"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/permission"
@@ -48,9 +51,10 @@ func main() {
 		v0.POST("/teacher", login.TeacherLogin)
 		v0.POST("/admin", login.AdminLogin)
 	}
-	// 管理员导入
+	// 管理员
 	v1 := r.Group("/admin")
 	{
+		v1.POST("/change/password", middleware.Auth(constant.AdminIdentity), admin.ChangePassword)
 		v1.GET("/list/student", middleware.Auth(constant.CommonIdentity), admin.ListStudent)
 		v1.GET("/list/teacher", middleware.Auth(constant.AdminIdentity), admin.ListTeacher)
 		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
@@ -153,6 +157,18 @@ func main() {
 	{
 		v11.GET("/info", middleware.Auth(constant.CommonIdentity), user.GetUserInfo)
 		v11.POST("/changePassword", middleware.Auth(constant.CommonIdentity), user.ChangePassword)
+	}
+	// 教案生成
+	v12 := r.Group("/lesson/plan")
+	{
+		// 转发代理
+		target, _ := url.Parse("http://127.0.0.1:12010")
+		generateProxy := httputil.NewSingleHostReverseProxy(target)
+
+		v12.GET("/list", middleware.Auth(constant.TeacherIdentity), lessonplan.GetAllLessonPlan)
+		v12.POST("/generate", middleware.Auth(constant.TeacherIdentity), func(c *gin.Context) {
+			generateProxy.ServeHTTP(c.Writer, c.Request)
+		})
 	}
 	// 静态资源
 	// r.Static("/static", "./static") // 废弃

@@ -69,3 +69,7 @@ func DeleteStudent(ctx context.Context, studentId uint) error {
 func DeleteTeacher(ctx context.Context, teacherId uint) error {
 	return mysql.DB.Delete(&entity.Teacher{}, teacherId).Error
 }
+
+func ChangeAdminPassword(username string, password string) error {
+	return mysql.DB.Model(&entity.Admin{}).Where("username = ?", username).Update("password", password).Error
+}

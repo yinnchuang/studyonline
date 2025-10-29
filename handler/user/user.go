@@ -1,10 +1,13 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 	"studyonline/constant"
+	"studyonline/dao/redis"
 	"studyonline/service"
 	"studyonline/util"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -60,6 +63,15 @@ func ChangePassword(c *gin.Context) {
 			})
 			return
 		}
+		userInfo, err := service.GetUserInfo(userId, identity)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+		cacheKey := fmt.Sprintf("change_password_%v_%v", userInfo.Username, constant.StudentIdentity)
+		redis.RDB.Set(c, cacheKey, 1, time.Hour*24*7)
 	} else if identity == constant.TeacherIdentity {
 		err := service.ChangeTeacherPassword(userId, string(bcryptPassword))
 		if err != nil {
@@ -68,6 +80,15 @@ func ChangePassword(c *gin.Context) {
 			})
 			return
 		}
+		userInfo, err := service.GetUserInfo(userId, identity)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+		cacheKey := fmt.Sprintf("change_password_%v_%v", userInfo.Username, constant.TeacherIdentity)
+		redis.RDB.Set(c, cacheKey, 1, time.Hour*24*7)
 	}
 
 	c.JSON(http.StatusOK, gin.H{

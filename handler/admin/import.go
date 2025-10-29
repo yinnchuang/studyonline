@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"studyonline/constant"
 	"studyonline/dao/entity"
+	"studyonline/dao/redis"
 	"studyonline/service"
 	"studyonline/util"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,6 +48,8 @@ func ImportStudent(c *gin.Context) {
 		})
 		return
 	}
+	cacheKey := fmt.Sprintf("change_password_%v_%v", username, constant.StudentIdentity)
+	redis.RDB.Set(c, cacheKey, -1, time.Hour*24*60)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
@@ -85,6 +89,8 @@ func ImportTeacher(c *gin.Context) {
 		})
 		return
 	}
+	cacheKey := fmt.Sprintf("change_password_%v_%v", username, constant.TeacherIdentity)
+	redis.RDB.Set(c, cacheKey, -1, time.Hour*24*60)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})

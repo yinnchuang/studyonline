@@ -44,5 +44,6 @@ func Init() {
 	db.AutoMigrate(&entity.Request{})
 	db.AutoMigrate(&entity.Comment{})
 	db.AutoMigrate(&entity.DownloadLog{})
+	db.AutoMigrate(&entity.LessonPlan{})
 	DB = db
 }
