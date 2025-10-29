@@ -70,8 +70,18 @@ func UploadAndCreateDataset(c *gin.Context) {
 		})
 		return
 	}
-
-	coverPath := "./static/cover/cover.png"
+	// 4. 获取并验证其他表单数据
+	datasetDTO := CreateDatasetDTO{}
+	if err := c.ShouldBind(&datasetDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数解析失败",
+		})
+		return
+	}
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	
+	coverPath := fmt.Sprintf("./static/cover/cover%v.png", datasetDTO.CategoryID)
 
 	if cover != nil {
 		ext = filepath.Ext(cover.Filename)
@@ -85,16 +95,6 @@ func UploadAndCreateDataset(c *gin.Context) {
 		}
 	}
 
-	// 4. 获取并验证其他表单数据
-	datasetDTO := CreateDatasetDTO{}
-	if err := c.ShouldBind(&datasetDTO); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "参数解析失败",
-		})
-		return
-	}
-	userId := c.GetUint("userId")
-	identity := c.GetInt("identity")
 	// 5. 调用服务层创建数据集记录
 	dataset, err := service.CreateDataset(
 		c,
@@ -241,4 +241,36 @@ func GetDatasetPermission(c *gin.Context) {
 		return
 	}
 
+}
+
+type DeleteDatasetDTO struct {
+	ID int `form:"id"`
+}
+
+func DeleteDataset(c *gin.Context) {
+	deleteDatasetDTO := DeleteDatasetDTO{}
+	if err := c.ShouldBindJSON(&deleteDatasetDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	userId := c.GetUint("userId")
+	dataset, err := service.GetDatasetByID(c, uint(deleteDatasetDTO.ID))
+	if err != nil || dataset.TeacherId != userId {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	err = service.DeleteDataset(c, uint(deleteDatasetDTO.ID))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
 }

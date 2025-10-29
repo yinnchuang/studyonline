@@ -152,3 +152,28 @@ func GetResource(c *gin.Context) {
 	// 直接使用gin的File方法返回文件
 	c.File(resource.FilePath)
 }
+
+type DeleteResourceDTO struct {
+	ID int `form:"id"`
+}
+
+func DeleteResource(c *gin.Context) {
+	deleteResourceDTO := DeleteResourceDTO{}
+	if err := c.ShouldBindJSON(&deleteResourceDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	if err := service.DeleteResource(c, uint(deleteResourceDTO.ID)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}

@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+
+	"gorm.io/gorm"
 )
 
 func ListResourceWithLimitOffset(ctx context.Context, limit int, offset int) ([]entity.Resource, error) {
@@ -118,4 +119,8 @@ func PlusResourceDownloadTime(ctx context.Context, resourceId uint) error {
 	return mysql.DB.Model(&entity.Resource{}).Where("id = ?", resourceId).
 		Update("download_time", gorm.Expr("download_time + ?", 1)).
 		Error
+}
+
+func DeleteResource(ctx context.Context, id uint) error {
+	return mysql.DB.Delete(&entity.Resource{}, id).Error
 }

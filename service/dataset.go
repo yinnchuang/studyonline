@@ -93,3 +93,7 @@ func PlusDatasetDownloadTime(ctx context.Context, datasetId uint) {
 	mysql.DB.Model(&entity.Dataset{}).Where("id = ?", datasetId).
 		Update("download_time", gorm.Expr("download_time + ?", 1))
 }
+
+func DeleteDataset(ctx context.Context, id uint) error {
+	return mysql.DB.Delete(&entity.Dataset{}, id).Error
+}

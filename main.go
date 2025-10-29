@@ -72,6 +72,8 @@ func main() {
 		v2.POST("/uploadAndCreate", middleware.Auth(constant.TeacherIdentity), resource.UploadAndCreateResource)
 		v2.GET("/cover", middleware.Auth(constant.CommonIdentity), resource.GetResourceCover)
 		v2.GET("/file", middleware.Auth(constant.CommonIdentity), resource.GetResource)
+
+		v2.POST("/delete", middleware.Auth(constant.TeacherIdentity), resource.DeleteResource)
 	}
 	// 数据集
 	v3 := r.Group("/dataset")
@@ -84,6 +86,8 @@ func main() {
 		v3.GET("/cover", middleware.Auth(constant.CommonIdentity), dataset.GetDatasetCover)
 		v3.GET("/file", middleware.Auth(constant.CommonIdentity), dataset.GetDataset)
 		v3.GET("/permission", middleware.Auth(constant.CommonIdentity), dataset.GetDatasetPermission)
+
+		v3.POST("/delete", middleware.Auth(constant.TeacherIdentity), dataset.DeleteDataset)
 	}
 	// 知识点
 	v4 := r.Group("/unit")
