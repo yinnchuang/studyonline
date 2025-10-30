@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"studyonline/constant"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
@@ -40,6 +41,62 @@ func Import(ctx context.Context, user interface{}, identity int) error {
 	} else {
 		return errors.New("导入失败")
 	}
+	return nil
+}
+
+func BatchImportStudents(ctx context.Context, students []entity.Student) error {
+	if len(students) == 0 {
+		return errors.New("没有可导入的学生数据")
+	}
+
+	// 开启事务
+	tx := mysql.DB.Begin()
+	if tx.Error != nil {
+		return fmt.Errorf("开启事务失败: %v", tx.Error)
+	}
+
+	for _, stu := range students {
+		// 执行插入
+		if err := tx.Create(&stu).Error; err != nil {
+			tx.Rollback()
+			return fmt.Errorf("导入失败: %v", err)
+		}
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("事务提交失败: %v", err)
+	}
+
+	return nil
+}
+
+func BatchImportTeachers(ctx context.Context, teachers []entity.Teacher) error {
+	if len(teachers) == 0 {
+		return errors.New("没有可导入的学生数据")
+	}
+
+	// 开启事务
+	tx := mysql.DB.Begin()
+	if tx.Error != nil {
+		return fmt.Errorf("开启事务失败: %v", tx.Error)
+	}
+
+	for _, tea := range teachers {
+		// 执行插入
+		if err := tx.Create(&tea).Error; err != nil {
+			tx.Rollback()
+			return fmt.Errorf("导入失败: %v", err)
+		}
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("事务提交失败: %v", err)
+	}
+
 	return nil
 }
 

@@ -179,3 +179,71 @@ func ListDatasetByTeacherId(c *gin.Context) {
 		"data":    listDatasetVOs,
 	})
 }
+
+// SearchDatasetByKeyword 根据关键词搜索数据集（匹配名称或描述）
+func SearchDatasetByKeyword(c *gin.Context) {
+	// 1. 解析分页参数（与原有接口保持一致，默认limit=-1查全部，page=0起始）
+	limitStr := c.DefaultQuery("limit", "-1")
+	pageStr := c.DefaultQuery("page", "0")
+	limit, _ := strconv.Atoi(limitStr)
+	page, _ := strconv.Atoi(pageStr)
+	offset := page * limit
+
+	// 2. 解析搜索关键词，空关键词直接返回参数错误
+	keyword := c.Query("keyword")
+	if keyword == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "搜索关键词不能为空",
+		})
+		return
+	}
+
+	// 3. 调用service层查询匹配的数据集
+	datasets, err := service.SearchDatasetByKeyword(c, limit, offset, keyword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	// 4. 转换为VO结构（关联教师信息，与原有List接口逻辑一致）
+	listDatasetVOs := []ListDatasetVO{}
+	for _, item := range datasets {
+		// 关联上传者（教师）信息，查询失败则跳过该条数据
+		uploader, err := service.GetTeacherInfo(item.TeacherId)
+		if err != nil {
+			continue
+		}
+
+		listDatasetVOs = append(listDatasetVOs, ListDatasetVO{
+			ID:                 item.ID,
+			CreatedAt:          item.CreatedAt,
+			Name:               item.Name,
+			CategoryID:         item.CategoryID,
+			Description:        item.Description,
+			Scale:              item.Scale,
+			Private:            item.Private,
+			Url:                item.Url,
+			UploaderName:       uploader.Name,
+			UploaderDepartment: uploader.Department,
+			DownloadTime:       item.DownloadTime,
+		})
+	}
+
+	// 5. 查询符合条件的总条数（用于分页计算）
+	total, err := service.CountDatasetByKeyword(c, keyword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	// 6. 返回统一格式结果（与原有接口字段一致：message、data、total）
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"data":    listDatasetVOs,
+		"total":   total,
+	})
+}

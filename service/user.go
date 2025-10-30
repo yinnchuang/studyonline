@@ -23,18 +23,24 @@ func GetUserInfo(userId uint, identity int) (*GetUserInfoVO, error) {
 
 func GetStudentInfo(id uint) (*GetUserInfoVO, error) {
 	var result GetUserInfoVO
-	err := mysql.DB.Model(&entity.Student{}).Where("id = ?", id).Find(&result).Error
-	if err != nil {
-		return nil, err
+	res := mysql.DB.Model(&entity.Student{}).Where("id = ?", id).Find(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return nil, nil
 	}
 	return &result, nil
 }
 
 func GetTeacherInfo(id uint) (*GetUserInfoVO, error) {
 	var result GetUserInfoVO
-	err := mysql.DB.Model(&entity.Teacher{}).Where("id = ?", id).Find(&result).Error
-	if err != nil {
-		return nil, err
+	res := mysql.DB.Model(&entity.Teacher{}).Where("id = ?", id).Find(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return nil, nil
 	}
 	return &result, nil
 }

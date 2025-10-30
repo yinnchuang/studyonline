@@ -65,8 +65,16 @@ func UploadAndCreateResource(c *gin.Context) {
 		})
 		return
 	}
-
-	coverPath := "./static/cover/cover.png"
+	
+	// 4. 获取其他表单数据
+	createResourceDTO := CreateResourceDTO{}
+	if err := c.Bind(&createResourceDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	coverPath := fmt.Sprintf("./static/cover/cover%v.png", createResourceDTO.CategoryID)
 
 	if cover != nil {
 		ext = filepath.Ext(cover.Filename)
@@ -80,15 +88,6 @@ func UploadAndCreateResource(c *gin.Context) {
 		}
 	}
 
-	// 4. 获取其他表单数据
-	createResourceDTO := CreateResourceDTO{}
-	if err := c.Bind(&createResourceDTO); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
-		})
-		return
-	}
-	fmt.Println(createResourceDTO)
 	// 5. 使用保存后的路径创建资源
 	err = service.CreateResource(
 		c,

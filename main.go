@@ -55,10 +55,17 @@ func main() {
 	v1 := r.Group("/admin")
 	{
 		v1.POST("/change/password", middleware.Auth(constant.AdminIdentity), admin.ChangePassword)
+		v1.POST("reset/student", middleware.Auth(constant.AdminIdentity), admin.ResetStudent)
+		v1.POST("reset/teacher", middleware.Auth(constant.AdminIdentity), admin.ResetTeacher)
+
 		v1.GET("/list/student", middleware.Auth(constant.CommonIdentity), admin.ListStudent)
 		v1.GET("/list/teacher", middleware.Auth(constant.AdminIdentity), admin.ListTeacher)
 		v1.POST("/import/student", middleware.Auth(constant.AdminIdentity), admin.ImportStudent)
 		v1.POST("/import/teacher", middleware.Auth(constant.AdminIdentity), admin.ImportTeacher)
+		v1.POST("/import/student/batch", middleware.Auth(constant.AdminIdentity), admin.ImportStudentByExcel)
+		v1.POST("/import/teacher/batch", middleware.Auth(constant.AdminIdentity), admin.ImportTeacherByExcel)
+		v1.GET("/import/format", middleware.Auth(constant.AdminIdentity), admin.GetFormatExcel)
+
 		v1.POST("/delete/student", middleware.Auth(constant.AdminIdentity), admin.DeleteStudent)
 		v1.POST("/delete/teacher", middleware.Auth(constant.AdminIdentity), admin.DeleteTeacher)
 	}
@@ -68,6 +75,7 @@ func main() {
 		v2.GET("/list", middleware.Auth(constant.CommonIdentity), resource.ListResource)
 		v2.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), resource.ListResourceByCategory)
 		v2.GET("/list/by/unit", middleware.Auth(constant.CommonIdentity), resource.ListResourceByUnit)
+		v2.GET("/list/by/keyword", middleware.Auth(constant.CommonIdentity), resource.SearchResourceByKeyword)
 
 		v2.POST("/uploadAndCreate", middleware.Auth(constant.TeacherIdentity), resource.UploadAndCreateResource)
 		v2.GET("/cover", middleware.Auth(constant.CommonIdentity), resource.GetResourceCover)
@@ -81,6 +89,7 @@ func main() {
 		v3.GET("/list", middleware.Auth(constant.CommonIdentity), dataset.ListDataset)
 		v3.GET("/list/by/category", middleware.Auth(constant.CommonIdentity), dataset.ListDatasetByCategory)
 		v3.GET("/list/by/teacherId", middleware.Auth(constant.TeacherIdentity), dataset.ListDatasetByTeacherId)
+		v3.GET("/list/by/keyword", middleware.Auth(constant.CommonIdentity), dataset.SearchDatasetByKeyword)
 
 		v3.POST("/uploadAndCreate", middleware.Auth(constant.TeacherIdentity), dataset.UploadAndCreateDataset)
 		v3.GET("/cover", middleware.Auth(constant.CommonIdentity), dataset.GetDatasetCover)

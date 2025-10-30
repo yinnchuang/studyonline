@@ -166,3 +166,60 @@ func ListResourceByUnit(c *gin.Context) {
 		})
 	}
 }
+
+// SearchResourceByKeyword 仅通过关键词搜索资源（匹配名称或描述）
+func SearchResourceByKeyword(c *gin.Context) {
+	// 解析分页参数（保持与原有接口一致）
+	limitStr := c.DefaultQuery("limit", "-1")
+	pageStr := c.DefaultQuery("page", "0")
+	limit, _ := strconv.Atoi(limitStr)
+	page, _ := strconv.Atoi(pageStr)
+	offset := page * limit
+
+	// 获取搜索关键词（从query参数中获取）
+	keyword := c.Query("keyword")
+	if keyword == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "搜索关键词不能为空",
+		})
+		return
+	}
+
+	// 调用服务层根据关键词搜索（匹配名称或描述）
+	resources, err := service.SearchResourceByKeyword(c, limit, offset, keyword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	// 转换为VO（隐藏不需要的字段，复用原有结构）
+	listResourceVOs := []ListResourceVO{}
+	for _, item := range resources {
+		listResourceVOs = append(listResourceVOs, ListResourceVO{
+			ID:           item.ID,
+			CreatedAt:    item.CreatedAt,
+			Name:         item.Name,
+			CategoryID:   item.CategoryID,
+			Description:  item.Description,
+			Units:        item.Units,
+			DownloadTime: item.DownloadTime,
+		})
+	}
+
+	// 获取符合条件的总条数
+	total, err := service.CountResourceByKeyword(c, keyword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "搜索成功",
+		"data":    listResourceVOs,
+		"total":   total,
+	})
+}
