@@ -1,0 +1,6 @@
+2025/10/30 16:25:09 token认证失败, redis: nil
+2025/10/30 16:25:16 id为4的用户，身份为3，正在请求/admin/import/format
+2025/10/30 16:29:37 id为4的用户，身份为3，正在请求/admin/import/format
+2025/10/30 16:29:58 id为4的用户，身份为3，正在请求/admin/list/student
+2025/10/30 16:30:03 id为4的用户，身份为3，正在请求/admin/list/teacher
+2025/10/30 16:30:15 id为4的用户，身份为3，正在请求/admin/reset/teacher

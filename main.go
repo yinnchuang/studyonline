@@ -55,8 +55,8 @@ func main() {
 	v1 := r.Group("/admin")
 	{
 		v1.POST("/change/password", middleware.Auth(constant.AdminIdentity), admin.ChangePassword)
-		v1.POST("reset/student", middleware.Auth(constant.AdminIdentity), admin.ResetStudent)
-		v1.POST("reset/teacher", middleware.Auth(constant.AdminIdentity), admin.ResetTeacher)
+		v1.POST("/reset/student", middleware.Auth(constant.AdminIdentity), admin.ResetStudent)
+		v1.POST("/reset/teacher", middleware.Auth(constant.AdminIdentity), admin.ResetTeacher)
 
 		v1.GET("/list/student", middleware.Auth(constant.CommonIdentity), admin.ListStudent)
 		v1.GET("/list/teacher", middleware.Auth(constant.AdminIdentity), admin.ListTeacher)

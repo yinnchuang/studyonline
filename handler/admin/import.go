@@ -213,6 +213,8 @@ func ResetTeacher(c *gin.Context) {
 		})
 		return
 	}
+	cacheKey := fmt.Sprintf("change_password_%v_%v", info.Username, constant.TeacherIdentity)
+	redis.RDB.Set(c, cacheKey, -1, time.Hour*24*60)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
@@ -253,6 +255,8 @@ func ResetStudent(c *gin.Context) {
 		})
 		return
 	}
+	cacheKey := fmt.Sprintf("change_password_%v_%v", info.Username, constant.StudentIdentity)
+	redis.RDB.Set(c, cacheKey, -1, time.Hour*24*60)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
