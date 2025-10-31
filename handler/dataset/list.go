@@ -21,6 +21,7 @@ type ListDatasetVO struct {
 	Private            bool      `json:"private"`
 	Url                string    `json:"url"`
 	UploaderName       string    `json:"uploader_name"`
+	UploaderUsername   string    `json:"uploader_username"`
 	UploaderDepartment string    `json:"uploader_department"`
 	DownloadTime       int       `json:"download_time"`
 }
@@ -36,7 +37,7 @@ func ListDataset(c *gin.Context) {
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasetWithLimitOffset {
 		uploader, err := service.GetTeacherInfo(item.TeacherId)
-		if err != nil {
+		if err != nil || uploader == nil {
 			continue
 		}
 
@@ -50,6 +51,7 @@ func ListDataset(c *gin.Context) {
 			Private:            item.Private,
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
+			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
 		})
@@ -113,7 +115,7 @@ func ListDatasetByCategory(c *gin.Context) {
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasetWithCategory {
 		uploader, err := service.GetTeacherInfo(item.TeacherId)
-		if err != nil {
+		if err != nil || uploader == nil {
 			continue
 		}
 
@@ -127,6 +129,7 @@ func ListDatasetByCategory(c *gin.Context) {
 			Private:            item.Private,
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
+			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
 		})
@@ -154,7 +157,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 	listDatasetVOs := []ListDatasetVO{}
 	for _, item := range datasets {
 		uploader, err := service.GetTeacherInfo(item.TeacherId)
-		if err != nil {
+		if err != nil || uploader == nil {
 			continue
 		}
 
@@ -168,6 +171,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 			Private:            item.Private,
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
+			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
 		})
@@ -212,7 +216,7 @@ func SearchDatasetByKeyword(c *gin.Context) {
 	for _, item := range datasets {
 		// 关联上传者（教师）信息，查询失败则跳过该条数据
 		uploader, err := service.GetTeacherInfo(item.TeacherId)
-		if err != nil {
+		if err != nil || uploader == nil {
 			continue
 		}
 
@@ -226,6 +230,7 @@ func SearchDatasetByKeyword(c *gin.Context) {
 			Private:            item.Private,
 			Url:                item.Url,
 			UploaderName:       uploader.Name,
+			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
 		})

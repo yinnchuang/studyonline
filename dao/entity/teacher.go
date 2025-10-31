@@ -1,9 +1,13 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Teacher struct {
-	gorm.Model
+	ID         uint `gorm:"primarykey"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 	Name       string `json:"name" gorm:"not null"`
 	Username   string `json:"username" gorm:"not null;unique"`
 	Password   string `json:"password" gorm:"not null"`

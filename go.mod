@@ -14,7 +14,7 @@ require (
 	golang.org/x/time v0.14.0
 	gopkg.in/ini.v1 v1.67.0
 	gorm.io/driver/mysql v1.6.0
-	gorm.io/gorm v1.30.1
+	gorm.io/gorm v1.31.0
 )
 
 require (
@@ -54,4 +54,5 @@ require (
 	golang.org/x/text v0.30.0 // indirect
 	google.golang.org/protobuf v1.36.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/plugin/soft_delete v1.2.1 // indirect
 )

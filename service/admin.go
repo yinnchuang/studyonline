@@ -7,6 +7,8 @@ import (
 	"studyonline/constant"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+	"studyonline/dao/redis"
+	"time"
 )
 
 func ImportAdmin(ctx context.Context, username string, password string) error {
@@ -69,6 +71,11 @@ func BatchImportStudents(ctx context.Context, students []entity.Student) error {
 		return fmt.Errorf("事务提交失败: %v", err)
 	}
 
+	for _, stu := range students {
+		cacheKey := fmt.Sprintf("change_password_%v_%v", stu.Username, constant.StudentIdentity)
+		redis.RDB.Set(ctx, cacheKey, -1, time.Hour*24*60)
+	}
+
 	return nil
 }
 
@@ -95,6 +102,11 @@ func BatchImportTeachers(ctx context.Context, teachers []entity.Teacher) error {
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return fmt.Errorf("事务提交失败: %v", err)
+	}
+
+	for _, tea := range teachers {
+		cacheKey := fmt.Sprintf("change_password_%v_%v", tea.Username, constant.TeacherIdentity)
+		redis.RDB.Set(ctx, cacheKey, -1, time.Hour*24*60)
 	}
 
 	return nil
