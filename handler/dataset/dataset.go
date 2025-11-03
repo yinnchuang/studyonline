@@ -263,6 +263,7 @@ func DeleteDataset(c *gin.Context) {
 		})
 		return
 	}
+	// TODO 改为开启事务并传到service中，保证原子完成
 	err = service.DeleteDataset(c, uint(deleteDatasetDTO.ID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
