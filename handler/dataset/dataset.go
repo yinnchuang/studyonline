@@ -80,7 +80,7 @@ func UploadAndCreateDataset(c *gin.Context) {
 	}
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
-	
+
 	coverPath := fmt.Sprintf("./static/cover/cover%v.png", datasetDTO.CategoryID)
 
 	if cover != nil {
@@ -264,6 +264,20 @@ func DeleteDataset(c *gin.Context) {
 		return
 	}
 	err = service.DeleteDataset(c, uint(deleteDatasetDTO.ID))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	err = service.DeleteRequestByDatasetId(c, uint(deleteDatasetDTO.ID))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	err = service.DeletePermissionByDatasetId(c, uint(deleteDatasetDTO.ID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

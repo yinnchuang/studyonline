@@ -157,3 +157,19 @@ func GetRequestById(ctx context.Context, requestId uint) (*entity.Request, error
 	}
 	return &request, nil
 }
+
+func DeleteRequestByDatasetId(ctx context.Context, datasetId uint) error {
+	err := mysql.DB.Delete(&entity.Request{}, "dataset_id = ?", datasetId).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeletePermissionByDatasetId(ctx context.Context, datasetId uint) error {
+	err := mysql.DB.Delete(&entity.Permission{}, "dataset_id = ?", datasetId).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
