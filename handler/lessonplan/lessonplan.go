@@ -20,7 +20,3 @@ func GetAllLessonPlan(c *gin.Context) {
 		"data":    lessonPlans,
 	})
 }
-
-func GenerateLessonPlan(c *gin.Context) {
-	
-}

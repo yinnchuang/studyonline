@@ -9,3 +9,23 @@
 2025/10/31 15:13:03 id为4的用户，身份为3，正在请求/admin/delete/student
 2025/10/31 15:13:07 id为4的用户，身份为3，正在请求/admin/import/student
 2025/10/31 15:13:11 id为4的用户，身份为3，正在请求/admin/list/student
+2025/11/02 10:43:09 id为4的用户，身份为3，正在请求/admin/import/student
+2025/11/02 10:43:38 id为4的用户，身份为3，正在请求/admin/import/student
+2025/11/02 10:43:42 id为4的用户，身份为3，正在请求/admin/list/student
+2025/11/02 10:44:29 id为4的用户，身份为3，正在请求/resource/list
+2025/11/02 10:44:36 id为4的用户，身份为3，正在请求/dataset/list
+2025/11/02 10:44:41 id为4的用户，身份为3，正在请求/dataset/uploadAndCreate
+2025/11/02 10:44:41 token认证失败, %!s(<nil>)
+2025/11/02 10:44:55 id为4的用户，身份为3，正在请求/dataset/uploadAndCreate
+2025/11/02 10:44:55 token认证失败, %!s(<nil>)
+2025/11/02 10:45:04 token认证失败, redis: nil
+2025/11/02 10:45:25 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/02 10:45:32 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/02 10:46:24 id为2的用户，身份为2，正在请求/dataset/uploadAndCreate
+2025/11/02 10:46:27 id为2的用户，身份为2，正在请求/dataset/list
+2025/11/03 16:24:43 token认证失败, redis: nil
+2025/11/03 16:24:44 token认证失败, redis: nil
+2025/11/03 16:25:31 token认证失败, redis: nil
+2025/11/03 16:25:51 token认证失败, redis: nil
+2025/11/03 16:26:00 id为4的用户，身份为3，正在请求/admin/list/student
+2025/11/03 16:26:03 id为4的用户，身份为3，正在请求/admin/import/student
