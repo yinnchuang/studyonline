@@ -25,11 +25,19 @@ func StudentLogin(c *gin.Context) {
 	}
 	cacheKey := fmt.Sprintf("change_password_%v_%v", username, constant.StudentIdentity)
 	changePassword, err := redis.RDB.Get(c, cacheKey).Int()
+	bindEmail, err := service.IfUserBindEmail(c, username, constant.StudentIdentity)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
 	if errors.Is(err, redis_.Nil) || changePassword == 1 {
 		c.JSON(http.StatusOK, gin.H{
 			"message":         "请求成功",
 			"token":           token,
 			"change_password": 1,
+			"bind_email":      bindEmail,
 		})
 		return
 	}
@@ -37,6 +45,7 @@ func StudentLogin(c *gin.Context) {
 		"message":         "请求成功",
 		"token":           token,
 		"change_password": -1,
+		"bind_email":      bindEmail,
 	})
 }
 
@@ -52,11 +61,19 @@ func TeacherLogin(c *gin.Context) {
 	}
 	cacheKey := fmt.Sprintf("change_password_%v_%v", username, constant.TeacherIdentity)
 	changePassword, err := redis.RDB.Get(c, cacheKey).Int()
+	bindEmail, err := service.IfUserBindEmail(c, username, constant.TeacherIdentity)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
 	if errors.Is(err, redis_.Nil) || changePassword == 1 {
 		c.JSON(http.StatusOK, gin.H{
 			"message":         "请求成功",
 			"token":           token,
 			"change_password": 1,
+			"bind_email":      bindEmail,
 		})
 		return
 	}
@@ -64,6 +81,7 @@ func TeacherLogin(c *gin.Context) {
 		"message":         "请求成功",
 		"token":           token,
 		"change_password": -1,
+		"bind_email":      bindEmail,
 	})
 }
 

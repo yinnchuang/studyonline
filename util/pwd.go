@@ -1,8 +1,9 @@
 package util
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // GetPwd 给密码加密
@@ -41,4 +42,17 @@ func IsValidPassword(password string) bool {
 	}
 
 	return true
+}
+
+func IsValidEmail(email string) bool {
+	// 1. 长度检查（按常见邮箱长度 6~254 做简单过滤）
+	if len(email) < 6 || len(email) > 254 {
+		return false
+	}
+
+	// 2. 正则校验
+	//    ^[a-zA-Z0-9._-]+        用户名
+	//    @[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$  域名
+	ok, _ := regexp.MatchString(`^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$`, email)
+	return ok
 }

@@ -26,7 +26,7 @@ func GetAllUnit(c *gin.Context) {
 }
 
 func RemoveUnit(c *gin.Context) {
-	unitIdStr := c.DefaultQuery("id", "")
+	unitIdStr := c.DefaultQuery("unit_id", "")
 	if unitIdStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -40,13 +40,35 @@ func RemoveUnit(c *gin.Context) {
 		})
 		return
 	}
-	err = service.RemoveUnit(c, uint(unitId))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
-		})
-		return
+	// 遍历删除
+	queue := []uint{uint(unitId)}
+	for len(queue) > 0 {
+		currentID := queue[0]
+		queue = queue[1:]
+
+		// 获取当前 unit 的所有子 unit
+		children, err := service.GetSonUnit(c, currentID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+
+		// 将子 unit ID 加入队列
+		for _, child := range children {
+			queue = append(queue, child.ID)
+		}
+
+		// 删除当前 unit
+		if err := service.RemoveUnit(c, currentID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})

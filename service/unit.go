@@ -20,6 +20,15 @@ func RemoveUnit(c context.Context, unitId uint) error {
 	return err
 }
 
+func GetSonUnit(c context.Context, fatherUnitId uint) ([]entity.Unit, error) {
+	var units []entity.Unit
+	err := mysql.DB.Model(&entity.Unit{}).Where("father_unit_id = ?", fatherUnitId).Find(&units).Error
+	if err != nil {
+		return nil, err
+	}
+	return units, nil
+}
+
 func CreateUnit(c context.Context, unit entity.Unit) error {
 	err := mysql.DB.Create(&unit).Error
 	return err

@@ -52,3 +52,11 @@ func ChangeStudentPassword(studentId uint, password string) error {
 func ChangeTeacherPassword(teacherId uint, password string) error {
 	return mysql.DB.Model(&entity.Teacher{}).Where("id = ?", teacherId).Update("password", password).Error
 }
+
+func BindStudentEmail(studentId uint, email string) error {
+	return mysql.DB.Model(&entity.Student{}).Where("id = ?", studentId).Update("email", email).Error
+}
+
+func BindTeacherEmail(teacherId uint, email string) error {
+	return mysql.DB.Model(&entity.Teacher{}).Where("id = ?", teacherId).Update("email", email).Error
+}

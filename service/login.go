@@ -56,3 +56,30 @@ func Login(ctx context.Context, username string, password string, identity int) 
 		return false, "", nil
 	}
 }
+
+func IfUserBindEmail(ctx context.Context, username string, identity int) (bool, error) {
+	if identity == constant.StudentIdentity { // 学生登录
+		stu := entity.Student{}
+		err := mysql.DB.Model(&entity.Student{}).Where("username = ?", username).Find(&stu).Error
+		if err != nil {
+			return false, err
+		}
+		if stu.Email == "" {
+			return false, nil
+		}
+		return true, nil
+
+	} else if identity == constant.TeacherIdentity { // 教师登录
+		tea := entity.Teacher{}
+		err := mysql.DB.Model(&entity.Teacher{}).Where("username = ?", username).Find(&tea).Error
+		if err != nil {
+			return false, err
+		}
+		if tea.Email == "" {
+			return false, nil
+		}
+		return true, nil
+	} else {
+		return false, nil
+	}
+}

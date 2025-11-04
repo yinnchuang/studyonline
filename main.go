@@ -168,6 +168,7 @@ func main() {
 	// 用户信息
 	v11 := r.Group("/user")
 	{
+		v11.POST("/bind/email", middleware.Auth(constant.CommonIdentity), user.BindEmail)
 		v11.GET("/info", middleware.Auth(constant.CommonIdentity), user.GetUserInfo)
 		v11.POST("/changePassword", middleware.Auth(constant.CommonIdentity), user.ChangePassword)
 	}

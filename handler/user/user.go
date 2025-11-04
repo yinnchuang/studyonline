@@ -95,3 +95,46 @@ func ChangePassword(c *gin.Context) {
 		"message": "请求成功",
 	})
 }
+
+type BindEmailDTO struct {
+	Email string `json:"email"`
+}
+
+func BindEmail(c *gin.Context) {
+	var bindEmailDTO BindEmailDTO
+	if err := c.ShouldBindJSON(&bindEmailDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+
+	if identity == constant.StudentIdentity {
+		err := service.BindStudentEmail(userId, bindEmailDTO.Email)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+	} else if identity == constant.TeacherIdentity {
+		err := service.BindTeacherEmail(userId, bindEmailDTO.Email)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
