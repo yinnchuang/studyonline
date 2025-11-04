@@ -108,7 +108,12 @@ func BindEmail(c *gin.Context) {
 		})
 		return
 	}
-
+	if !util.IsValidEmail(bindEmailDTO.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "非邮箱格式",
+		})
+		return
+	}
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
 
