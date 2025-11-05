@@ -61,7 +61,7 @@ func GetAllScore(c *gin.Context) {
 	var scoreVOs []ScoreVO
 	for _, item := range scores {
 		studentInfo, err := service.GetStudentInfo(item.StudentId)
-		if err != nil {
+		if err != nil || studentInfo == nil {
 			continue
 		}
 		scoreVOs = append(scoreVOs, ScoreVO{

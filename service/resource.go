@@ -107,25 +107,36 @@ func CreateResource(ctx context.Context, name string, categoryId int, descriptio
 }
 
 func UpdateResource(ctx context.Context, resourceId uint, name string, categoryId int, description string, filepath string, coverPath string, unitIds []uint) error {
-	units := make([]entity.Unit, len(unitIds))
-	for i, id := range unitIds {
-		var unit entity.Unit
-		unit.ID = id
-		units[i] = unit
-	}
-	resource := entity.Resource{
-		Name:        name,
-		CategoryID:  categoryId,
-		Description: description,
-		FilePath:    filepath,
-		CoverPath:   coverPath,
-		Units:       units,
-	}
-	err := mysql.DB.Model(&entity.Resource{}).Where("id = ?", resourceId).Updates(resource).Error
-	if err != nil {
-		return err
-	}
-	return nil
+	return mysql.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. 更新资源本体字段
+		err := tx.Model(&entity.Resource{}).
+			Where("id = ?", resourceId).
+			Updates(map[string]interface{}{
+				"name":        name,
+				"category_id": categoryId,
+				"description": description,
+				"file_path":   filepath,
+				"cover_path":  coverPath,
+			}).Error
+		if err != nil {
+			return err
+		}
+
+		// 2. 加载资源实例（为了操作关联）
+		var res entity.Resource
+		if err := tx.First(&res, resourceId).Error; err != nil {
+			return err
+		}
+
+		// 3. 构造新的 Unit 切片（只填 ID 即可）
+		newUnits := make([]entity.Unit, len(unitIds))
+		for i, uid := range unitIds {
+			newUnits[i] = entity.Unit{Model: gorm.Model{ID: uid}}
+		}
+
+		// 4. 替换多对多关联
+		return tx.Model(&res).Association("Units").Replace(newUnits)
+	})
 }
 
 func GetResourceByID(ctx context.Context, id uint) (*entity.Resource, error) {
