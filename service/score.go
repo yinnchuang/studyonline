@@ -30,3 +30,18 @@ func CreateScore(c context.Context, score entity.Score) error {
 	}
 	return nil
 }
+
+func UpdateScore(c context.Context, score entity.Score) error {
+	if err := mysql.DB.Model(&entity.Score{}).Where("student_id = ?", score.StudentId).Updates(&score).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func ExistScore(c context.Context, studentID uint) (bool, error) {
+	var count int64
+	if err := mysql.DB.Model(&entity.Score{}).Where("student_id = ?", studentID).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}

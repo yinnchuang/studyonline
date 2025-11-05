@@ -106,6 +106,28 @@ func CreateResource(ctx context.Context, name string, categoryId int, descriptio
 	return nil
 }
 
+func UpdateResource(ctx context.Context, resourceId uint, name string, categoryId int, description string, filepath string, coverPath string, unitIds []uint) error {
+	units := make([]entity.Unit, len(unitIds))
+	for i, id := range unitIds {
+		var unit entity.Unit
+		unit.ID = id
+		units[i] = unit
+	}
+	resource := entity.Resource{
+		Name:        name,
+		CategoryID:  categoryId,
+		Description: description,
+		FilePath:    filepath,
+		CoverPath:   coverPath,
+		Units:       units,
+	}
+	err := mysql.DB.Model(&entity.Resource{}).Where("id = ?", resourceId).Updates(resource).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetResourceByID(ctx context.Context, id uint) (*entity.Resource, error) {
 	var resource entity.Resource
 	err := mysql.DB.First(&resource, id).Error

@@ -289,3 +289,116 @@ func DeleteDataset(c *gin.Context) {
 		"message": "请求成功",
 	})
 }
+
+type UpdateDatasetDTO struct {
+	DatasetID   *uint   `form:"dataset_id"`
+	Name        *string `form:"name"`
+	CategoryID  *int    `form:"category_id"`
+	Description *string `form:"description"`
+	Scale       *string `form:"scale"`
+	Private     *bool   `form:"private"`
+	Url         *string `form:"url"`
+}
+
+func UpdateDataset(c *gin.Context) {
+	// 1. 获取并验证上传的文件
+	file, err := c.FormFile("file")
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "数据集文件获取失败",
+		})
+		return
+	}
+	cover, err := c.FormFile("cover")
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "封面图片获取失败",
+		})
+		return
+	}
+
+	// 2. 验证文件大小
+	if file != nil && file.Size > constant.MaxResourceSize {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "数据集文件过大",
+		})
+		return
+	}
+	if cover != nil && cover.Size > constant.MaxCoverSize {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "封面图片过大",
+		})
+		return
+	}
+
+	updateDatasetDTO := UpdateDatasetDTO{}
+	if err := c.ShouldBind(&updateDatasetDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数解析失败",
+		})
+		return
+	}
+	if updateDatasetDTO.DatasetID == nil || updateDatasetDTO.Name == nil || updateDatasetDTO.CategoryID == nil ||
+		updateDatasetDTO.Description == nil || updateDatasetDTO.Scale == nil || updateDatasetDTO.Private == nil ||
+		updateDatasetDTO.Url == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "缺少参数",
+		})
+		return
+	}
+	userId := c.GetUint("userId")
+
+	dataset, err := service.GetDatasetByID(c, *updateDatasetDTO.DatasetID)
+	if dataset.TeacherId != userId {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "非本人上传",
+		})
+		return
+	}
+
+	// 3. 保存文件到服务器（内部路径，不暴露给前端）
+	now := time.Now()
+	yearMonth := now.Format("200601")
+
+	filePath := dataset.FilePath
+
+	if file != nil {
+		ext := filepath.Ext(file.Filename)
+		fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		filePath = filepath.Join(fmt.Sprintf("./static/dataset/%s", yearMonth), fileName)
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "数据集文件保存失败",
+			})
+			return
+		}
+	}
+
+	coverPath := fmt.Sprintf("./static/cover/cover%v.png", *updateDatasetDTO.CategoryID)
+	if cover != nil {
+		ext := filepath.Ext(cover.Filename)
+		coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		coverPath = filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
+		if err := c.SaveUploadedFile(cover, coverPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "封面图片保存失败",
+			})
+			return
+		}
+	}
+
+	// 调用服务层创建数据集记录
+	err = service.UpdateDataset(c, *updateDatasetDTO.DatasetID, *updateDatasetDTO.Name, *updateDatasetDTO.CategoryID,
+		*updateDatasetDTO.Description, filePath, coverPath, *updateDatasetDTO.Scale, userId, *updateDatasetDTO.Private,
+		*updateDatasetDTO.Url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}

@@ -65,7 +65,7 @@ func UploadAndCreateResource(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	// 4. 获取其他表单数据
 	createResourceDTO := CreateResourceDTO{}
 	if err := c.Bind(&createResourceDTO); err != nil {
@@ -167,6 +167,115 @@ func DeleteResource(c *gin.Context) {
 
 	if err := service.DeleteResource(c, uint(deleteResourceDTO.ID)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
+
+type UpdateResourceDTO struct {
+	ResourceId  *uint   `form:"resource_id"`
+	Name        *string `form:"name"`
+	CategoryID  *int    `form:"category_id"`
+	Description *string `form:"description"`
+	UnitIds     *[]uint `form:"unit_ids"`
+}
+
+func UpdateResource(c *gin.Context) {
+	// 1. 获取并验证上传的文件
+	file, err := c.FormFile("file")
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "文件获取失败",
+		})
+		return
+	}
+	cover, err := c.FormFile("cover")
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "封面获取失败",
+		})
+		return
+	}
+
+	// 2. 验证文件大小
+	if file != nil && file.Size > constant.MaxResourceSize {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "文件过大",
+		})
+		return
+	}
+	if cover != nil && cover.Size > constant.MaxCoverSize {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "封面过大",
+		})
+		return
+	}
+
+	updateResourceDTO := UpdateResourceDTO{}
+	if err := c.Bind(&updateResourceDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数绑定失败",
+		})
+		return
+	}
+	if updateResourceDTO.ResourceId == nil || updateResourceDTO.Name == nil ||
+		updateResourceDTO.CategoryID == nil || updateResourceDTO.Description == nil ||
+		updateResourceDTO.UnitIds == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	resource, err := service.GetResourceByID(c, *updateResourceDTO.ResourceId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	now := time.Now()
+	yearMonth := now.Format("200601")
+
+	// 3. 保存文件到服务器（不暴露给前端的内部路径）
+	filePath := resource.FilePath
+
+	if file != nil {
+		ext := filepath.Ext(file.Filename)
+		fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		filePath = filepath.Join(fmt.Sprintf("./static/resource/%s", yearMonth), fileName)
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "文件保存失败",
+			})
+			return
+		}
+	}
+
+	// 4. 获取其他表单数据
+	coverPath := fmt.Sprintf("./static/cover/cover%v.png", *updateResourceDTO.CategoryID)
+	if cover != nil {
+		ext := filepath.Ext(cover.Filename)
+		coverName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+		coverPath = filepath.Join(fmt.Sprintf("./static/cover/%s", yearMonth), coverName)
+		if err := c.SaveUploadedFile(cover, coverPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "封面保存失败",
+			})
+			return
+		}
+	}
+
+	// 5. 使用保存后的路径创建资源
+	err = service.UpdateResource(c, *updateResourceDTO.ResourceId, *updateResourceDTO.Name, *updateResourceDTO.CategoryID,
+		*updateResourceDTO.Description, filePath, coverPath, *updateResourceDTO.UnitIds)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "请求失败",
 		})
 		return

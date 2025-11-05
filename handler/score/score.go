@@ -95,19 +95,39 @@ func CreateScore(c *gin.Context) {
 		})
 		return
 	}
-	score := entity.Score{
-		StudentId:  createScoreDTO.StudentId,
-		UsualScore: createScoreDTO.UsualScore,
-		ExamScore:  createScoreDTO.ExamScore,
-		FinalScore: createScoreDTO.FinalScore,
-	}
-	err := service.CreateScore(c, score)
+	exist, err := service.ExistScore(c, createScoreDTO.StudentId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
 		})
 		return
 	}
+
+	score := entity.Score{
+		StudentId:  createScoreDTO.StudentId,
+		UsualScore: createScoreDTO.UsualScore,
+		ExamScore:  createScoreDTO.ExamScore,
+		FinalScore: createScoreDTO.FinalScore,
+	}
+
+	if exist {
+		err := service.UpdateScore(c, score)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+	} else {
+		err := service.CreateScore(c, score)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})

@@ -80,6 +80,25 @@ func CreateDataset(ctx context.Context, name string, categoryId int, description
 	return &dataset, nil
 }
 
+func UpdateDataset(ctx context.Context, datasetId uint, name string, categoryId int, description string, filePath string, coverPath string, scale string, teacherId uint, private bool, url string) error {
+	dataset := entity.Dataset{
+		Name:        name,
+		CategoryID:  categoryId,
+		Description: description,
+		Scale:       scale,
+		FilePath:    filePath,
+		CoverPath:   coverPath,
+		TeacherId:   teacherId,
+		Private:     private,
+		Url:         url,
+	}
+	err := mysql.DB.Where("id = ?", datasetId).Updates(&dataset).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetDatasetByID(ctx context.Context, id uint) (*entity.Dataset, error) {
 	var dataset entity.Dataset
 	err := mysql.DB.First(&dataset, id).Error
