@@ -1,9 +1,13 @@
 package service
 
 import (
+	"context"
 	"studyonline/constant"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+	"studyonline/dao/redis"
+	"studyonline/util"
+	"time"
 )
 
 type GetUserInfoVO struct {
@@ -59,4 +63,10 @@ func BindStudentEmail(studentId uint, email string) error {
 
 func BindTeacherEmail(teacherId uint, email string) error {
 	return mysql.DB.Model(&entity.Teacher{}).Where("id = ?", teacherId).Update("email", email).Error
+}
+
+func SaveEmailCode(ctx context.Context, email string) error {
+	cacheKey := util.GenerateCode()
+	cacheValue := email
+	return redis.RDB.Set(ctx, cacheKey, cacheValue, time.Minute*5).Err()
 }
