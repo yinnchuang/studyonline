@@ -228,6 +228,12 @@ func ChangePasswordByEmailStudent(c *gin.Context) {
 		})
 		return
 	}
+	if !util.IsValidPassword(changePasswordByEmailDTO.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "密码过于简单",
+		})
+		return
+	}
 	student, err := service.GetStudentInfoByUsername(changePasswordByEmailDTO.Username)
 	if err != nil || student == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -260,6 +266,12 @@ func ChangePasswordByEmailTeacher(c *gin.Context) {
 	if err := c.ShouldBindJSON(&changePasswordByEmailDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "参数错误",
+		})
+		return
+	}
+	if !util.IsValidPassword(changePasswordByEmailDTO.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "密码过于简单",
 		})
 		return
 	}
