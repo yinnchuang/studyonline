@@ -9,7 +9,7 @@ import (
 func TestSend(t *testing.T) {
 	// 邮件服务器信息
 	smtpServer := "smtp.imicams.ac.cn" // SMTP 服务器地址
-	smtpPort := "587"                  // SMTP 服务器端口号
+	smtpPort := "25"                   // SMTP 服务器端口号
 	smtpUser := "zsgc@imicams.ac.cn"   // 发件人邮箱地址
 	smtpPassword := "Znyx#25117"       // 发件人邮箱密码
 
