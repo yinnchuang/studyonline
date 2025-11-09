@@ -72,7 +72,7 @@ func SendCodeToEmail(email string, code string) error {
 	from := smtpUser
 	to := []string{email} // 收件人邮箱地址
 	subject := "找回密码验证码"
-	body := "本次验证码为：" + code
+	body := "本次验证码为：" + code + "\n" + "验证码有效时长5分钟"
 
 	// 构造邮件内容
 	message := fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to[0], subject, body)
