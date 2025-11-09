@@ -1,6 +1,9 @@
 package util
 
 import (
+	"fmt"
+	"log"
+	"net/smtp"
 	"regexp"
 
 	"golang.org/x/crypto/bcrypt"
@@ -55,4 +58,32 @@ func IsValidEmail(email string) bool {
 	//    @[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$  域名
 	ok, _ := regexp.MatchString(`^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$`, email)
 	return ok
+}
+
+var (
+	smtpServer   = "smtp.imicams.ac.cn" // SMTP 服务器地址
+	smtpPort     = "587"                // SMTP 服务器端口号
+	smtpUser     = "zsgc@imicams.ac.cn" // 发件人邮箱地址
+	smtpPassword = "Znyx#25117"         // 发件人邮箱密码
+)
+
+func SendCodeToEmail(email string, code string) error {
+	// 邮件内容
+	from := smtpUser
+	to := []string{email} // 收件人邮箱地址
+	subject := "找回密码验证码"
+	body := "本次验证码为：" + code
+
+	// 构造邮件内容
+	message := fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to[0], subject, body)
+
+	// 连接到 SMTP 服务器
+	auth := smtp.PlainAuth("", smtpUser, smtpPassword, smtpServer)
+	err := smtp.SendMail(smtpServer+":"+smtpPort, auth, from, to, []byte(message))
+	if err != nil {
+		log.Printf("Error sending email: %s\n", err)
+		return err
+	}
+
+	return nil
 }

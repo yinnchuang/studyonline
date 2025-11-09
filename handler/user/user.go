@@ -143,3 +143,149 @@ func BindEmail(c *gin.Context) {
 		"message": "请求成功",
 	})
 }
+
+type SendCodeDTO struct {
+	Username string `json:"username"`
+}
+
+func SendCodeStudent(c *gin.Context) {
+	var sendCodeDTO SendCodeDTO
+	if err := c.ShouldBindJSON(&sendCodeDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数错误",
+		})
+		return
+	}
+	student, err := service.GetStudentInfoByUsername(sendCodeDTO.Username)
+	if err != nil || student == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户不存在",
+		})
+		return
+	}
+	if !util.IsValidEmail(student.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "未绑定邮箱或邮箱无效",
+		})
+		return
+	}
+	err = service.SendCode2Email(c, student.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "发送失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
+
+func SendCodeTeacher(c *gin.Context) {
+	var sendCodeDTO SendCodeDTO
+	if err := c.ShouldBindJSON(&sendCodeDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数错误",
+		})
+		return
+	}
+	teacher, err := service.GetTeacherInfoByUsername(sendCodeDTO.Username)
+	if err != nil || teacher == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户不存在",
+		})
+		return
+	}
+	if !util.IsValidEmail(teacher.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "未绑定邮箱或邮箱无效",
+		})
+		return
+	}
+	err = service.SendCode2Email(c, teacher.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "发送失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
+
+type ChangePasswordByEmailDTO struct {
+	Username string `json:"username"`
+	Code     string `json:"code"`
+	Password string `json:"password"`
+}
+
+func ChangePasswordByEmailStudent(c *gin.Context) {
+	var changePasswordByEmailDTO ChangePasswordByEmailDTO
+	if err := c.ShouldBindJSON(&changePasswordByEmailDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数错误",
+		})
+		return
+	}
+	student, err := service.GetStudentInfoByUsername(changePasswordByEmailDTO.Username)
+	if err != nil || student == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户不存在",
+		})
+		return
+	}
+	code := redis.RDB.Get(c, student.Email).String()
+	if code != changePasswordByEmailDTO.Code {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "验证码错误",
+		})
+		return
+	}
+	bcryptPassword, _ := util.GetPwd(changePasswordByEmailDTO.Password)
+	err = service.ChangeStudentPassword(student.ID, string(bcryptPassword))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
+
+func ChangePasswordByEmailTeacher(c *gin.Context) {
+	var changePasswordByEmailDTO ChangePasswordByEmailDTO
+	if err := c.ShouldBindJSON(&changePasswordByEmailDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数错误",
+		})
+		return
+	}
+	teacher, err := service.GetTeacherInfoByUsername(changePasswordByEmailDTO.Username)
+	if err != nil || teacher == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户不存在",
+		})
+		return
+	}
+	code := redis.RDB.Get(c, teacher.Email).String()
+	if code != changePasswordByEmailDTO.Code {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "验证码错误",
+		})
+		return
+	}
+	bcryptPassword, _ := util.GetPwd(changePasswordByEmailDTO.Password)
+	err = service.ChangeTeacherPassword(teacher.ID, string(bcryptPassword))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}

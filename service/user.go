@@ -37,9 +37,33 @@ func GetStudentInfo(id uint) (*GetUserInfoVO, error) {
 	return &result, nil
 }
 
+func GetStudentInfoByUsername(username string) (*entity.Student, error) {
+	var result entity.Student
+	res := mysql.DB.Model(&entity.Student{}).Where("username = ?", username).Find(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return nil, nil
+	}
+	return &result, nil
+}
+
 func GetTeacherInfo(id uint) (*GetUserInfoVO, error) {
 	var result GetUserInfoVO
 	res := mysql.DB.Model(&entity.Teacher{}).Where("id = ?", id).Find(&result)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return nil, nil
+	}
+	return &result, nil
+}
+
+func GetTeacherInfoByUsername(username string) (*entity.Teacher, error) {
+	var result entity.Teacher
+	res := mysql.DB.Model(&entity.Teacher{}).Where("username = ?", username).Find(&result)
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -65,8 +89,16 @@ func BindTeacherEmail(teacherId uint, email string) error {
 	return mysql.DB.Model(&entity.Teacher{}).Where("id = ?", teacherId).Update("email", email).Error
 }
 
-func SaveEmailCode(ctx context.Context, email string) error {
-	cacheKey := util.GenerateCode()
-	cacheValue := email
-	return redis.RDB.Set(ctx, cacheKey, cacheValue, time.Minute*5).Err()
+func SendCode2Email(ctx context.Context, email string) error {
+	code := util.GenerateCode()
+	cacheKey := email
+	cacheValue := code
+	if err := redis.RDB.Set(ctx, cacheKey, cacheValue, time.Minute*5).Err(); err != nil {
+		return err
+	}
+	err := util.SendCodeToEmail(email, code)
+	if err != nil {
+		return err
+	}
+	return nil
 }

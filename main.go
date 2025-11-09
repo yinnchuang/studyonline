@@ -173,6 +173,12 @@ func main() {
 		v11.POST("/bind/email", middleware.Auth(constant.CommonIdentity), user.BindEmail)
 		v11.GET("/info", middleware.Auth(constant.CommonIdentity), user.GetUserInfo)
 		v11.POST("/changePassword", middleware.Auth(constant.CommonIdentity), user.ChangePassword)
+
+		v11.POST("/send/code/student", user.SendCodeStudent)
+		v11.POST("/send/code/teacher", user.SendCodeTeacher)
+
+		v11.POST("/change/password/student/email", user.ChangePasswordByEmailStudent)
+		v11.POST("/change/password/teacher/email", user.ChangePasswordByEmailTeacher)
 	}
 	// 教案生成
 	v12 := r.Group("/lesson/plan")
