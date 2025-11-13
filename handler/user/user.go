@@ -241,7 +241,7 @@ func ChangePasswordByEmailStudent(c *gin.Context) {
 		})
 		return
 	}
-	code := redis.RDB.Get(c, student.Email).String()
+	code := redis.RDB.Get(c, student.Email).Val()
 	if code != changePasswordByEmailDTO.Code {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "验证码错误",

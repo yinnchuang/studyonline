@@ -132,3 +132,28 @@ func CreateScore(c *gin.Context) {
 		"message": "请求成功",
 	})
 }
+
+type DeleteScoreDTO struct {
+	ScoreId uint `json:"score_id"`
+}
+
+func DeleteScore(c *gin.Context) {
+	var deleteScoreDTO DeleteScoreDTO
+	if err := c.ShouldBindJSON(&deleteScoreDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "参数错误",
+		})
+		return
+	}
+	err := service.DeleteScore(c, deleteScoreDTO.ScoreId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}

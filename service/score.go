@@ -45,3 +45,7 @@ func ExistScore(c context.Context, studentID uint) (bool, error) {
 	}
 	return count > 0, nil
 }
+
+func DeleteScore(c context.Context, scoreId uint) error {
+	return mysql.DB.Delete(&entity.Score{}, "id = ?", scoreId).Error
+}

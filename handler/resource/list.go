@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"studyonline/constant"
@@ -119,12 +120,13 @@ func ListResourceByCategory(c *gin.Context) {
 }
 
 type ListResourceByUnitDTO struct {
-	UnitIds []uint `json:"unit_ids"`
+	UnitIds []uint `form:"unit_ids"`
 }
 
 func ListResourceByUnit(c *gin.Context) {
 	var listResourceByUnitDTO ListResourceByUnitDTO
-	err := c.ShouldBindJSON(&listResourceByUnitDTO)
+	err := c.ShouldBindQuery(&listResourceByUnitDTO)
+	fmt.Println(listResourceByUnitDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",

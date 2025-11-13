@@ -150,6 +150,7 @@ func main() {
 		// 给教师调用
 		v8.GET("/list", middleware.Auth(constant.TeacherIdentity), score.GetAllScore)
 		v8.POST("/create", middleware.Auth(constant.TeacherIdentity), score.CreateScore)
+		v8.POST("/delete", middleware.Auth(constant.TeacherIdentity), score.DeleteScore)
 		// 根据studentId展示，给student调用
 		v8.GET("/list/by/studentId", middleware.Auth(constant.StudentIdentity), score.GetScoreByStudentId)
 	}
