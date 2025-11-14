@@ -202,7 +202,20 @@ func DisagreePermission(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
+}
+
+func GetUnviewedRequest(c *gin.Context) {
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+
+}
+
+func GetUnviewedApproval(c *gin.Context) {
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+
 }

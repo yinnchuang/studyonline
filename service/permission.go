@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	redis_ "github.com/redis/go-redis/v9"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 	"studyonline/dao/redis"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -172,4 +175,42 @@ func DeletePermissionByDatasetId(ctx context.Context, datasetId uint) error {
 		return err
 	}
 	return nil
+}
+
+func GetUnviewedRequest(ctx context.Context, userId uint, identity int) (int, error) {
+	cacheKey := fmt.Sprintf("unviewed_request_%v_%v", userId, identity)
+	value, err := redis.RDB.Get(ctx, cacheKey).Int()
+	if err != nil && !errors.Is(err, redis_.Nil) {
+		return 0, err
+	}
+	return value, nil
+}
+
+func ClearUnviewedRequest(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_request_%v_%v", userId, identity)
+	redis.RDB.Set(ctx, cacheKey, 0, time.Hour*24*60)
+}
+
+func PlusUnviewedRequest(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_request_%v_%v", userId, identity)
+	redis.RDB.Incr(ctx, cacheKey)
+}
+
+func GetUnviewedApproval(ctx context.Context, userId uint, identity int) (int, error) {
+	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+	value, err := redis.RDB.Get(ctx, cacheKey).Int()
+	if err != nil && !errors.Is(err, redis_.Nil) {
+		return 0, err
+	}
+	return value, nil
+}
+
+func ClearUnviewedApproval(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+	redis.RDB.Set(ctx, cacheKey, 0, time.Hour*24*60)
+}
+
+func PlusUnviewedApproval(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+	redis.RDB.Incr(ctx, cacheKey)
 }
