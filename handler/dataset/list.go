@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"studyonline/constant"
 	"studyonline/service"
+	"studyonline/util"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -50,7 +51,7 @@ func ListDataset(c *gin.Context) {
 			Scale:              item.Scale,
 			Private:            item.Private,
 			Url:                item.Url,
-			UploaderName:       uploader.Name,
+			UploaderName:       util.ProtectName(uploader.Name),
 			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
@@ -128,7 +129,7 @@ func ListDatasetByCategory(c *gin.Context) {
 			Scale:              item.Scale,
 			Private:            item.Private,
 			Url:                item.Url,
-			UploaderName:       uploader.Name,
+			UploaderName:       util.ProtectName(uploader.Name),
 			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
@@ -170,7 +171,7 @@ func ListDatasetByTeacherId(c *gin.Context) {
 			Scale:              item.Scale,
 			Private:            item.Private,
 			Url:                item.Url,
-			UploaderName:       uploader.Name,
+			UploaderName:       util.ProtectName(uploader.Name),
 			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
@@ -229,7 +230,7 @@ func SearchDatasetByKeyword(c *gin.Context) {
 			Scale:              item.Scale,
 			Private:            item.Private,
 			Url:                item.Url,
-			UploaderName:       uploader.Name,
+			UploaderName:       util.ProtectName(uploader.Name),
 			UploaderUsername:   uploader.Username,
 			UploaderDepartment: uploader.Department,
 			DownloadTime:       item.DownloadTime,
