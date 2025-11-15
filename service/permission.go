@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	redis_ "github.com/redis/go-redis/v9"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 	"studyonline/dao/redis"
 	"time"
+
+	redis_ "github.com/redis/go-redis/v9"
 
 	"gorm.io/gorm"
 )
@@ -194,10 +195,11 @@ func ClearUnviewedRequest(ctx context.Context, userId uint, identity int) {
 func PlusUnviewedRequest(ctx context.Context, userId uint, identity int) {
 	cacheKey := fmt.Sprintf("unviewed_request_%v_%v", userId, identity)
 	redis.RDB.Incr(ctx, cacheKey)
+	redis.RDB.Expire(ctx, cacheKey, time.Hour*24*60)
 }
 
-func GetUnviewedApproval(ctx context.Context, userId uint, identity int) (int, error) {
-	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+func GetUnviewedReview(ctx context.Context, userId uint, identity int) (int, error) {
+	cacheKey := fmt.Sprintf("unviewed_review_%v_%v", userId, identity)
 	value, err := redis.RDB.Get(ctx, cacheKey).Int()
 	if err != nil && !errors.Is(err, redis_.Nil) {
 		return 0, err
@@ -205,12 +207,13 @@ func GetUnviewedApproval(ctx context.Context, userId uint, identity int) (int, e
 	return value, nil
 }
 
-func ClearUnviewedApproval(ctx context.Context, userId uint, identity int) {
-	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+func ClearUnviewedReview(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_review_%v_%v", userId, identity)
 	redis.RDB.Set(ctx, cacheKey, 0, time.Hour*24*60)
 }
 
-func PlusUnviewedApproval(ctx context.Context, userId uint, identity int) {
-	cacheKey := fmt.Sprintf("unviewed_approval_%v_%v", userId, identity)
+func PlusUnviewedReview(ctx context.Context, userId uint, identity int) {
+	cacheKey := fmt.Sprintf("unviewed_review_%v_%v", userId, identity)
 	redis.RDB.Incr(ctx, cacheKey)
+	redis.RDB.Expire(ctx, cacheKey, time.Hour*24*60)
 }

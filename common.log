@@ -13,3 +13,19 @@
 2025/11/13 17:08:34 id为2的用户，身份为2，正在请求/resource/list/by/unit
 2025/11/13 17:09:01 id为2的用户，身份为2，正在请求/resource/list/by/unit
 2025/11/13 17:10:38 id为2的用户，身份为2，正在请求/resource/list/by/unit
+2025/11/15 10:07:45 token认证失败, redis: nil
+2025/11/15 10:09:32 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/15 10:09:44 id为4的用户，身份为3，正在请求/admin/list/teacher
+2025/11/15 10:09:55 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/15 10:11:31 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/15 10:14:07 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/15 10:14:13 id为4的用户，身份为3，正在请求/admin/import/teacher
+2025/11/15 10:14:39 id为1的用户，身份为2，正在请求/dataset/uploadAndCreate
+2025/11/15 10:14:52 id为1的用户，身份为2，正在请求/dataset/uploadAndCreate
+2025/11/15 10:15:00 id为1的用户，身份为2，正在请求/dataset/list
+2025/11/15 10:15:37 id为2的用户，身份为2，正在请求/permission/request
+2025/11/15 10:16:01 id为1的用户，身份为2，正在请求/user/get/unviewed/review
+2025/11/15 10:16:26 id为1的用户，身份为2，正在请求/permission/list/review
+2025/11/15 10:16:41 id为1的用户，身份为2，正在请求/permission/agree
+2025/11/15 10:16:56 id为2的用户，身份为2，正在请求/user/clear/unviewed/request
+2025/11/15 10:17:02 id为2的用户，身份为2，正在请求/user/get/unviewed/request

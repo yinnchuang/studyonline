@@ -180,6 +180,12 @@ func main() {
 
 		v11.POST("/change/password/student/email", user.ChangePasswordByEmailStudent)
 		v11.POST("/change/password/teacher/email", user.ChangePasswordByEmailTeacher)
+
+		v11.GET("/get/unviewed/request", middleware.Auth(constant.CommonIdentity), permission.GetUnviewedRequest)      // 自己未读的申请
+		v11.GET("/get/unviewed/review", middleware.Auth(constant.TeacherIdentity), permission.GetUnviewedReview)       // 自己未读的审批
+		v11.POST("/clear/unviewed/request", middleware.Auth(constant.CommonIdentity), permission.ClearUnviewedRequest) // 清空自己未读的申请
+		v11.POST("/clear/unviewed/review", middleware.Auth(constant.TeacherIdentity), permission.ClearUnviewedReview)  // 清空自己未读的审批
+
 	}
 	// 教案生成
 	v12 := r.Group("/lesson/plan")

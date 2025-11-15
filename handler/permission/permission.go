@@ -2,6 +2,7 @@ package permission
 
 import (
 	"net/http"
+	"studyonline/constant"
 	"studyonline/service"
 
 	"github.com/gin-gonic/gin"
@@ -130,6 +131,7 @@ func RequestPermissionByDatasetId(c *gin.Context) {
 		})
 		return
 	}
+	service.PlusUnviewedReview(c, dataset.TeacherId, constant.TeacherIdentity)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
@@ -166,6 +168,7 @@ func AgreePermission(c *gin.Context) {
 		})
 		return
 	}
+	service.PlusUnviewedRequest(c, request.UserID, request.Identity)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
@@ -202,7 +205,7 @@ func DisagreePermission(c *gin.Context) {
 		})
 		return
 	}
-
+	service.PlusUnviewedRequest(c, request.UserID, request.Identity)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})
@@ -211,11 +214,51 @@ func DisagreePermission(c *gin.Context) {
 func GetUnviewedRequest(c *gin.Context) {
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
-
+	count, err := service.GetUnviewedRequest(c, userId, identity)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "请求成功",
+			"count":   0,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"count":   count,
+	})
 }
 
-func GetUnviewedApproval(c *gin.Context) {
+func ClearUnviewedRequest(c *gin.Context) {
 	userId := c.GetUint("userId")
 	identity := c.GetInt("identity")
+	service.ClearUnviewedRequest(c, userId, identity)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}
 
+func GetUnviewedReview(c *gin.Context) {
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	count, err := service.GetUnviewedReview(c, userId, identity)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "请求成功",
+			"count":   0,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+		"count":   count,
+	})
+}
+
+func ClearUnviewedReview(c *gin.Context) {
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	service.ClearUnviewedReview(c, userId, identity)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
 }
