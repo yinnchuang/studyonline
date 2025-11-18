@@ -156,6 +156,8 @@ func ListResourceByUnit(c *gin.Context) {
 		})
 	}
 
+	total, err := service.CountResourceWithUnit(c, listResourceByUnitDTO.UnitIds)
+	fmt.Println(err)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -165,6 +167,7 @@ func ListResourceByUnit(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "请求成功",
 			"data":    listResourceVOs,
+			"total":   total,
 		})
 	}
 }

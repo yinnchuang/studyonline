@@ -84,6 +84,20 @@ func ListResourceWithUnitLimitOffset(ctx context.Context, limit int, offset int,
 	return resources, nil
 }
 
+func CountResourceWithUnit(ctx context.Context, unitIds []uint) (int64, error) {
+	var count int64
+	err := mysql.DB.
+		Model(&entity.Resource{}).
+		Joins("JOIN resource_units ru ON ru.resource_id = resources.id").
+		Where("ru.unit_id IN ?", unitIds).
+		Distinct("resources.id"). // 只统计不重复的 resources.id
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func CreateResource(ctx context.Context, name string, categoryId int, description string, filepath string, coverPath string, unitIds []uint) error {
 	units := make([]entity.Unit, len(unitIds))
 	for i, id := range unitIds {
