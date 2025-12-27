@@ -195,6 +195,7 @@ func main() {
 		generateProxy := httputil.NewSingleHostReverseProxy(target)
 
 		v12.GET("/list", middleware.Auth(constant.TeacherIdentity), lessonplan.GetAllLessonPlan)
+		v12.POST("/delete", middleware.Auth(constant.TeacherIdentity), lessonplan.RemoveLessonPlan)
 		v12.POST("/generate", middleware.Auth(constant.TeacherIdentity), func(c *gin.Context) {
 			generateProxy.ServeHTTP(c.Writer, c.Request)
 		})
