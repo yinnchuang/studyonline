@@ -12,7 +12,8 @@ import re
 import json
 from LLM_api import (
     tongyi_generate_objectives,
-    tongyi_generate_key_difficult,
+    tongyi_generate_key,
+    tongyi_generate_difficult,
     tongyi_generate_content,
     tongyi_generate_ideological,
     tongyi_generate_reflection,
@@ -24,7 +25,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
     'mysql+pymysql://root:123456@127.0.0.1:3306/studyonline?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.config['DEEPSEEK_API_KEY'] = os.getenv('DEEPSEEK_API_KEY', 'sk-c1140274e15a46e597ca1c8c75a22d7b')
 db.init_app(app)
 
 # 第一次运行前创建表
@@ -90,15 +90,12 @@ def generate_lessonplan():
 
             elif step == 'key_difficult':
                 objectives = data.get('objectives', '') or ''
-                ai_content = tongyi_generate_key_difficult(theme, duration_int, objectives)
-                key_points = ''
-                difficult_points = ''
-                key_match = re.search(r'(教学重点|重点)[:：]?([\s\S]*?)(教学难点|难点|$)', ai_content or '')
-                if key_match:
-                    key_points = (key_match.group(2) or '').strip()
-                diff_match = re.search(r'(教学难点|难点)[:：]?([\s\S]*)', ai_content or '')
-                if diff_match:
-                    difficult_points = (diff_match.group(2) or '').strip()
+                ai_content = tongyi_generate_key(theme, duration_int, objectives)
+                if ai_content and len(ai_content.strip()) > 0:
+                    key_points = ai_content.strip()
+                ai_content = tongyi_generate_difficult(theme, duration_int, objectives)
+                if ai_content and len(ai_content.strip()) > 0:
+                    difficult_points = ai_content.strip()
                 if not key_points and not difficult_points:
                     return jsonify({'success': False, 'msg': ai_content or 'AI生成失败', 'key_points': '', 'difficult_points': ''})
                 return jsonify({'success': True, 'key_points': key_points, 'difficult_points': difficult_points, 'raw': (ai_content or '').strip()})
@@ -132,13 +129,9 @@ def generate_lessonplan():
         objectives = ''
         try:
             ai_content = tongyi_generate_objectives(theme, duration_int)
+            print(ai_content)
             if ai_content and len(ai_content.strip()) > 0:
-                cleaned = ai_content.strip()
-                if "教学目标" in cleaned:
-                    cleaned = cleaned.split("教学目标")[-1].strip()
-                if "示例" in cleaned:
-                    cleaned = cleaned.split("示例")[0].strip()
-                objectives = cleaned
+                objectives = ai_content.strip()
         except Exception as e:
             print(f"生成教学目标失败: {e}")
 
@@ -147,13 +140,12 @@ def generate_lessonplan():
         difficult_points = ''
         if objectives:
             try:
-                ai_content = tongyi_generate_key_difficult(theme, duration_int, objectives)
-                key_match = re.search(r'(教学重点|重点)[:：]?([\s\S]*?)(教学难点|难点|$)', ai_content or '')
-                if key_match:
-                    key_points = (key_match.group(2) or '').strip()
-                diff_match = re.search(r'(教学难点|难点)[:：]?([\s\S]*)', ai_content or '')
-                if diff_match:
-                    difficult_points = (diff_match.group(2) or '').strip()
+                ai_content = tongyi_generate_key(theme, duration_int, objectives)
+                if ai_content and len(ai_content.strip()) > 0:
+                    key_points = ai_content.strip()
+                ai_content = tongyi_generate_difficult(theme, duration_int, objectives)
+                if ai_content and len(ai_content.strip()) > 0:
+                    difficult_points = ai_content.strip()
             except Exception as e:
                 print(f"生成重点难点失败: {e}")
 
@@ -178,10 +170,6 @@ def generate_lessonplan():
             except Exception as e:
                 print(f"生成思政要点失败: {e}")
 
-        # 如果提供了思政要点参数，优先使用
-        ideological_input = (data.get('ideological', '') or '').strip()
-        if ideological_input:
-            ideological_points = ideological_input
 
         # 如果没有生成思政要点，尝试自动生成
         if not ideological_points and content:
