@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http/httputil"
-	"net/url"
 	"studyonline/constant"
 	"studyonline/handler/admin"
 	"studyonline/handler/comment"
@@ -190,15 +188,16 @@ func main() {
 	// 教案生成
 	v12 := r.Group("/lesson/plan")
 	{
-		// 转发代理
-		target, _ := url.Parse("http://127.0.0.1:12010")
-		generateProxy := httputil.NewSingleHostReverseProxy(target)
-
 		v12.GET("/list", middleware.Auth(constant.TeacherIdentity), lessonplan.GetAllLessonPlan)
 		v12.POST("/delete", middleware.Auth(constant.TeacherIdentity), lessonplan.RemoveLessonPlan)
-		v12.POST("/generate", middleware.Auth(constant.TeacherIdentity), func(c *gin.Context) {
-			generateProxy.ServeHTTP(c.Writer, c.Request)
-		})
+		v12.POST("/generate", middleware.Auth(constant.TeacherIdentity), lessonplan.GenerateLessonPlan)
+		v12.POST("/update", middleware.Auth(constant.TeacherIdentity), lessonplan.UpdateLessonPlan)
+		v12.POST("/publish", middleware.Auth(constant.TeacherIdentity), lessonplan.PublishLessonPlan)
+	}
+	// 教案-学生侧
+	v13 := r.Group("/lesson/plan/student")
+	{
+		v13.GET("/list", middleware.Auth(constant.StudentIdentity), lessonplan.GetAllLessonPlanStudent)
 	}
 	// 静态资源
 	// r.Static("/static", "./static") // 废弃

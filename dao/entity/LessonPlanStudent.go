@@ -1,7 +1,9 @@
 package entity
 
-type LessonPlan struct {
-	ID                uint   `gorm:"primarykey"`
+import "gorm.io/gorm"
+
+type LessonPlanStudent struct {
+	gorm.Model
 	Title             string `json:"title"`
 	Duration          string `json:"duration"`
 	Objectives        string `json:"objectives"`
@@ -10,5 +12,5 @@ type LessonPlan struct {
 	Content           string `json:"content"`
 	IdeologicalPoints string `json:"ideological_points"`
 	UnitIds           string `json:"unit_ids"`
-	PublishStatus     uint   `json:"publish_status"`
+	FatherId          uint   `json:"father_id"`
 }

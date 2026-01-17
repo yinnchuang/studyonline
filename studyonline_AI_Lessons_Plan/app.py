@@ -60,69 +60,19 @@ def _get_data_from_request():
 @app.route('/lesson/plan/generate', methods=['POST'])
 def generate_lessonplan():
     data = _get_data_from_request()
+    print(data)
+
     theme = data.get('theme', '') or ''
     duration = data.get('duration', '') or ''
+    unit_ids = data.get('unit_ids', '')
+    unit_name = data.get('unit_names', '') or ''
+    remark = data.get('remark', '') or ''
+    step = data.get('step', '') or ''
+
     try:
         duration_int = int(duration)
     except Exception:
         duration_int = 45
-
-    step = data.get('step')
-
-    # 分步 AI 生成：仅返回 JSON，不落库
-    if step != "":
-        try:
-            if (not step) or step == 'objectives':
-                ai_content = tongyi_generate_objectives(theme, duration_int)
-                if not ai_content or len(ai_content.strip()) == 0:
-                    return jsonify({
-                        'success': False,
-                        'msg': '教学目标生成失败，请检查API密钥或主题内容',
-                        'error': ai_content or '未知错误',
-                        'objectives': ''
-                    })
-                cleaned = ai_content.strip()
-                if "教学目标" in cleaned:
-                    cleaned = cleaned.split("教学目标")[-1].strip()
-                if "示例" in cleaned:
-                    cleaned = cleaned.split("示例")[0].strip()
-                return jsonify({'success': True, 'objectives': cleaned, 'raw': ai_content.strip()})
-
-            elif step == 'key_difficult':
-                objectives = data.get('objectives', '') or ''
-                ai_content = tongyi_generate_key(theme, duration_int, objectives)
-                if ai_content and len(ai_content.strip()) > 0:
-                    key_points = ai_content.strip()
-                ai_content = tongyi_generate_difficult(theme, duration_int, objectives)
-                if ai_content and len(ai_content.strip()) > 0:
-                    difficult_points = ai_content.strip()
-                if not key_points and not difficult_points:
-                    return jsonify({'success': False, 'msg': ai_content or 'AI生成失败', 'key_points': '', 'difficult_points': ''})
-                return jsonify({'success': True, 'key_points': key_points, 'difficult_points': difficult_points, 'raw': (ai_content or '').strip()})
-
-            elif step == 'content':
-                objectives = data.get('objectives', '') or ''
-                key_points = data.get('key_points', '') or ''
-                difficult_points = data.get('difficult_points', '') or ''
-                ai_content = tongyi_generate_content(theme, duration_int, objectives, key_points, difficult_points)
-                if not ai_content or len((ai_content or '').strip()) == 0:
-                    return jsonify({'success': False, 'msg': ai_content or 'AI生成失败', 'content': ''})
-                return jsonify({'success': True, 'content': ai_content.strip()})
-
-            elif step == 'ideological':
-                objectives = data.get('objectives', '') or ''
-                key_points = data.get('key_points', '') or ''
-                difficult_points = data.get('difficult_points', '') or ''
-                content = data.get('content', '') or ''
-                ai_content = tongyi_generate_ideological(theme, duration_int, objectives, key_points, difficult_points, content)
-                if ai_content and len(ai_content.strip()) > 0:
-                    return jsonify({'success': True, 'ideological_points': ai_content.strip()})
-                return jsonify({'success': False, 'msg': ai_content or 'AI生成失败', 'ideological_points': ''})
-
-            else:
-                return jsonify({'success': False, 'msg': '未指定生成步骤'})
-        except Exception as e:
-            return jsonify({'success': False, 'msg': f'AI生成异常: {e}'})
 
     try:
         # 步骤1: 生成教学目标
@@ -140,10 +90,10 @@ def generate_lessonplan():
         difficult_points = ''
         if objectives:
             try:
-                ai_content = tongyi_generate_key(theme, duration_int, objectives)
+                ai_content = tongyi_generate_key(theme, duration_int, objectives, unit_name, remark)
                 if ai_content and len(ai_content.strip()) > 0:
                     key_points = ai_content.strip()
-                ai_content = tongyi_generate_difficult(theme, duration_int, objectives)
+                ai_content = tongyi_generate_difficult(theme, duration_int, objectives, unit_name, remark)
                 if ai_content and len(ai_content.strip()) > 0:
                     difficult_points = ai_content.strip()
             except Exception as e:
@@ -153,7 +103,7 @@ def generate_lessonplan():
         content = ''
         if objectives or key_points or difficult_points:
             try:
-                ai_content = tongyi_generate_content(theme, duration_int, objectives, key_points, difficult_points)
+                ai_content = tongyi_generate_content(theme, duration_int, objectives, key_points, difficult_points, unit_name, remark)
                 if ai_content and len((ai_content or '').strip()) > 0:
                     content = ai_content.strip()
             except Exception as e:
@@ -164,7 +114,7 @@ def generate_lessonplan():
         if content:
             try:
                 ai_content = tongyi_generate_ideological(theme, duration_int, objectives, key_points, difficult_points,
-                                                         content)
+                                                         content, unit_name, remark)
                 if ai_content and len(ai_content.strip()) > 0:
                     ideological_points = ai_content.strip()
             except Exception as e:
@@ -183,7 +133,9 @@ def generate_lessonplan():
             key_points=key_points,
             difficult_points=difficult_points,
             content=content,
-            ideological_points=ideological_points
+            ideological_points=ideological_points,
+            unit_ids=json.dumps(unit_ids),
+            publish_status=0,
         )
         db.session.add(plan)
         db.session.commit()

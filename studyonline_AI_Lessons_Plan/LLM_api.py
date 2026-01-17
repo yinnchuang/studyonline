@@ -39,8 +39,8 @@ def tongyi_generate_objectives(theme, duration):
 
 
 # 生成重点
-def tongyi_generate_key(theme, duration, objectives):
-    prompt = f"""请基于以下教学信息，简明生成本课的重点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n\n要求：\n1. 直接返回“重点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n重点：\n1. XX概念的理解与应用\n2. XX技能的掌握\n\n请直接用markdown语法返回重点和难点内容，不要包含其他说明。"""
+def tongyi_generate_key(theme, duration, objectives, unit_name, remark):
+    prompt = f"""请基于以下教学信息，简明生成本课的重点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n要求：\n1. 直接返回“重点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n重点：\n1. XX概念的理解与应用\n2. XX技能的掌握\n\n请直接用markdown语法返回重点和难点内容，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -69,8 +69,8 @@ def tongyi_generate_key(theme, duration, objectives):
 
 
 # 生成难点
-def tongyi_generate_difficult(theme, duration, objectives):
-    prompt = f"""请基于以下教学信息，简明生成本课的难点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n\n要求：\n1. 直接返回“难点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n难点：\n1. XX原理的深入理解\n2. XX能力的迁移运用\n\n请直接用markdown语法返回难点内容，不要包含其他说明。"""
+def tongyi_generate_difficult(theme, duration, objectives, unit_name, remark):
+    prompt = f"""请基于以下教学信息，简明生成本课的难点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n要求：\n1. 直接返回“难点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n难点：\n1. XX原理的深入理解\n2. XX能力的迁移运用\n\n请直接用markdown语法返回难点内容，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -99,8 +99,8 @@ def tongyi_generate_difficult(theme, duration, objectives):
 
 
 # 教学流程
-def tongyi_generate_content(theme, duration, objectives, key_points, difficult_points):
-    prompt = f"""请设计{duration}分钟的课程教学流程：\n\n【设计要求】\n1. 导入要激发兴趣、联系已有知识，时长为1-3分钟\n2. 讲解要分解难点、突出重点\n3. 活动要互动性强、巩固知识\n4. 总结要提炼要点、布置作业，时长大概3分钟\n\n【参考信息】\n教学目标：\n{objectives}\n\n教学重点：\n{key_points}\n\n教学难点：  \n{difficult_points}\n\n请按时间顺序详细描述每个环节的教学活动，流程内容无需出现“课程名称"、"教学流程设计"或“课程结束”等字样。"""
+def tongyi_generate_content(theme, duration, objectives, key_points, difficult_points, unit_name, remark):
+    prompt = f"""请设计{duration}分钟的课程教学流程：\n\n【设计要求】\n1. 导入要激发兴趣、联系已有知识，时长为1-3分钟\n2. 讲解要分解难点、突出重点\n3. 活动要互动性强、巩固知识\n4. 总结要提炼要点、布置作业，时长大概3分钟\n\n【参考信息】\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n教学重点：\n{key_points}\n\n教学难点：  \n{difficult_points}\n\n请按时间顺序详细描述每个环节的教学活动，流程内容无需出现“课程名称"、"教学流程设计"或“课程结束”等字样。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -129,7 +129,7 @@ def tongyi_generate_content(theme, duration, objectives, key_points, difficult_p
 
 
 # 涉及思政融入点
-def tongyi_generate_ideological(theme, duration, objectives, key_points, difficult_points, content):
+def tongyi_generate_ideological(theme, duration, objectives, key_points, difficult_points, content, unit_name, remark):
     prompt = f"""结合以下教学信息：
         主题：{theme}
         教学目标：
