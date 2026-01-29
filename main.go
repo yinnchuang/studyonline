@@ -8,6 +8,7 @@ import (
 	"studyonline/handler/discuss"
 	"studyonline/handler/homework"
 	"studyonline/handler/lessonplan"
+	"studyonline/handler/lessonplan_discuss"
 	"studyonline/handler/login"
 	"studyonline/handler/middleware"
 	"studyonline/handler/permission"
@@ -198,6 +199,14 @@ func main() {
 	v13 := r.Group("/lesson/plan/student")
 	{
 		v13.GET("/list", middleware.Auth(constant.StudentIdentity), lessonplan.GetAllLessonPlanStudent)
+	}
+	// 教案讨论
+	v14 := r.Group("/lesson/plan/discuss")
+	{
+		v14.GET("/get", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.GetDiscussesByLessonPlanID)
+		v14.POST("/create", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.CreateLessonPlanDiscuss)
+		v14.GET("/remove", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.RemoveLessonPlanDiscuss)
+
 	}
 	// 静态资源
 	// r.Static("/static", "./static") // 废弃
