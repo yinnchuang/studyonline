@@ -205,7 +205,7 @@ func main() {
 	{
 		v14.GET("/get", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.GetDiscussesByLessonPlanID)
 		v14.POST("/create", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.CreateLessonPlanDiscuss)
-		v14.GET("/remove", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.RemoveLessonPlanDiscuss)
+		v14.POST("/remove", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.RemoveLessonPlanDiscuss)
 
 	}
 	// 静态资源
