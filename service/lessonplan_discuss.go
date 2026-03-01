@@ -17,13 +17,13 @@ func GetLessonPlanDiscussByID(c *gin.Context, id uint) (*entity.LessonPlanDiscus
 	return &discuss, nil
 }
 
-func GetLessonPlanDiscussByLessonPlanID(c *gin.Context, id uint) (*entity.LessonPlanDiscuss, error) {
-	var discuss entity.LessonPlanDiscuss
-	err := mysql.DB.Model(&entity.LessonPlanDiscuss{}).Where("lesson_plan_id = ?", id).Find(&discuss).Error
+func GetLessonPlanDiscussByLessonPlanID(c *gin.Context, id uint) ([]entity.LessonPlanDiscuss, error) {
+	var discusses []entity.LessonPlanDiscuss
+	err := mysql.DB.Model(&entity.LessonPlanDiscuss{}).Where("lesson_plan_id = ?", id).Find(&discusses).Error
 	if err != nil {
 		return nil, err
 	}
-	return &discuss, nil
+	return discusses, nil
 }
 
 func CreateLessonPlanDiscuss(c context.Context, discuss entity.LessonPlanDiscuss) error {
