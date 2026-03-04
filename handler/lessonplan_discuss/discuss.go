@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type LessonPlanDiscussVO struct {
+	entity.LessonPlanDiscuss
+	Name     string `json:"name"`
+	Username string `json:"username"`
+}
+
 func GetDiscussesByLessonPlanID(c *gin.Context) {
 	lessonPlanIDStr := c.Query("LessonPlanID")
 	lessonPlanID, _ := strconv.Atoi(lessonPlanIDStr)
@@ -19,9 +25,23 @@ func GetDiscussesByLessonPlanID(c *gin.Context) {
 		})
 		return
 	}
+
+	var discussVOs []LessonPlanDiscussVO
+	for _, discuss := range discusses {
+		userInfo, err := service.GetUserInfo(discuss.UserId, discuss.Identity)
+		vo := LessonPlanDiscussVO{
+			LessonPlanDiscuss: discuss,
+		}
+		if err == nil && userInfo != nil {
+			vo.Name = userInfo.Name
+			vo.Username = userInfo.Username
+		}
+		discussVOs = append(discussVOs, vo)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
-		"data":    discusses,
+		"data":    discussVOs,
 	})
 }
 
