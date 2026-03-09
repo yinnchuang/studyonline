@@ -2,8 +2,8 @@ import requests
 import time
 from django.conf import settings
 
-api_key = "sk-P4Zt6HP2KzwNsSwp2jGTRfywlFBhsFdWfIFAcUbOlUqstd63"  # 新密钥
-url = "http://ai.cloud.imicams.ac.cn/imaas/v1/chat/completions"  # 新URL
+api_key = "sk-c1140274e15a46e597ca1c8c75a22d7b"
+url = "https://api.deepseek.com/v1/chat/completions"
 headers = {
     "Authorization": f"Bearer {api_key}",
     "Content-Type": "application/json"
