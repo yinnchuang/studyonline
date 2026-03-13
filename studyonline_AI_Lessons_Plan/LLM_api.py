@@ -11,7 +11,7 @@ headers = {
 
 # 制定教学目标
 def tongyi_generate_objectives(theme, duration):
-    prompt = f"""请作为教学专家，为{duration}分钟的课程“{theme}”制定教学目标, 使用markdown语法，要求如下：\n1. 紧密围绕教学主题，并且能在教学时长内合理完成；\n2. 明确分为三类：知识目标、技能目标、素质目标，每类至少1条；\n3. 每条目标必须可观察、可测量；\n4. 使用数字序号列出3-5条。\n\n示例：\n ###知识目标\n1. 了解XX概念\n2. 熟悉XX并举例说明\n###技能目标\n1. 独立完成XX操作\n2. 熟练XX技能\n###素质目标\n体会XX的价值\n\n请直接返回教学目标，不要包含其他说明。"""
+    prompt = f"""请作为医学数据处理教学专家，为{duration}分钟的课程“{theme}”制定教学目标, 使用markdown语法，要求如下：\n1. 紧密围绕医学数据处理相关教学主题，并且能在教学时长内合理完成；\n2. 明确分为三类：知识目标、技能目标、素质目标，每类至少1条；\n3. 每条目标必须可观察、可测量；\n4. 使用数字序号列出3-5条；\n5. 内容要贴近医学生的数据处理场景，如临床数据分析、医学统计学应用等；\n6. 重要：如果{duration}分钟的教学时长不足以覆盖所有相关知识点，请优先选择最核心、最重要的知识点，确保在有限时间内学生能够真正掌握关键内容，对非核心知识点可以适当取舍或简要提及。\n\n示例：\n ###知识目标\n1. 了解XX概念\n2. 熟悉XX并举例说明\n###技能目标\n1. 独立完成XX操作\n2. 熟练XX技能\n###素质目标\n体会XX的价值\n\n请直接返回教学目标，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -40,7 +40,13 @@ def tongyi_generate_objectives(theme, duration):
 
 # 生成重点
 def tongyi_generate_key(theme, duration, objectives, unit_name, remark):
-    prompt = f"""请基于以下教学信息，简明生成本课的重点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n要求：\n1. 直接返回“重点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n重点：\n1. XX概念的理解与应用\n2. XX技能的掌握\n\n请直接用markdown语法返回重点和难点内容，不要包含其他说明。"""
+    unit_name_display = unit_name.strip()
+    if unit_name_display:
+        unit_part = f"相关知识点：\n{unit_name_display}"
+    else:
+        unit_part = "相关知识点：（请根据课程主题，明确输出本课程可能涉及的3-5个医学数据处理相关知识点）"
+    
+    prompt = f"""请作为医学数据处理教学专家，基于以下教学信息，简明生成本课的重点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n{unit_part}\n\n要求：\n1. 直接返回“重点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握；\n3. 内容要贴近医学生的数据处理场景，如临床数据清洗、医学统计学分析、生物信息学数据处理等；\n4. 如果相关知识点为空，请首先明确列出本课程可能涉及的3-5个医学数据处理相关知识点，然后再生成重点；\n5. 重要：如果{duration}分钟的教学时长不足以覆盖所有相关知识点，请优先选择最核心、最重要的知识点作为重点，对非核心知识点可以适当取舍，确保在有限时间内学生能够真正掌握关键内容。\n\n示例：\n重点：\n1. XX概念的理解与应用\n2. XX技能的掌握\n\n请直接用markdown语法返回重点内容，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -70,7 +76,13 @@ def tongyi_generate_key(theme, duration, objectives, unit_name, remark):
 
 # 生成难点
 def tongyi_generate_difficult(theme, duration, objectives, unit_name, remark):
-    prompt = f"""请基于以下教学信息，简明生成本课的难点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n要求：\n1. 直接返回“难点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握。\n\n示例：\n难点：\n1. XX原理的深入理解\n2. XX能力的迁移运用\n\n请直接用markdown语法返回难点内容，不要包含其他说明。"""
+    unit_name_display = unit_name.strip()
+    if unit_name_display:
+        unit_part = f"相关知识点：\n{unit_name_display}"
+    else:
+        unit_part = "相关知识点：（请根据课程主题，明确输出本课程可能涉及的3-5个医学数据处理相关知识点）"
+    
+    prompt = f"""请作为医学数据处理教学专家，基于以下教学信息，简明生成本课的难点：\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n{unit_part}\n\n要求：\n1. 直接返回“难点：”这部分内容，内容要精炼，每部分内容可以是一段话，也可以分点列出，但每项不要多于2点；\n2. 语言简洁明了，便于教师理解和把握；\n3. 内容要贴近医学生的数据处理场景，如复杂的医学统计方法、多维度临床数据分析、基因组数据处理等；\n4. 如果相关知识点为空，请首先明确列出本课程可能涉及的3-5个医学数据处理相关知识点，然后再生成难点；\n5. 重要：如果{duration}分钟的教学时长不足以覆盖所有相关知识点，请优先选择最核心、最重要的知识点作为难点，对非核心知识点可以适当取舍，确保在有限时间内学生能够真正掌握关键内容。\n\n示例：\n难点：\n1. XX原理的深入理解\n2. XX能力的迁移运用\n\n请直接用markdown语法返回难点内容，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -100,7 +112,13 @@ def tongyi_generate_difficult(theme, duration, objectives, unit_name, remark):
 
 # 教学流程
 def tongyi_generate_content(theme, duration, objectives, key_points, difficult_points, unit_name, remark):
-    prompt = f"""请设计{duration}分钟的课程教学流程：\n\n【设计要求】\n1. 导入要激发兴趣、联系已有知识，时长为1-3分钟\n2. 讲解要分解难点、突出重点\n3. 活动要互动性强、巩固知识\n4. 总结要提炼要点、布置作业，时长大概3分钟\n\n【参考信息】\n教学目标：\n{objectives}\n相关知识点：\n{unit_name}\n\n教学重点：\n{key_points}\n\n教学难点：  \n{difficult_points}\n\n请按时间顺序详细描述每个环节的教学活动，流程内容无需出现“课程名称"、"教学流程设计"或“课程结束”等字样。"""
+    unit_name_display = unit_name.strip()
+    if unit_name_display:
+        unit_part = f"相关知识点：\n{unit_name_display}"
+    else:
+        unit_part = "相关知识点：（请根据课程主题，明确输出本课程可能涉及的3-5个医学数据处理相关知识点）"
+    
+    prompt = f"""请作为医学数据处理教学专家，设计{duration}分钟的课程教学流程：\n\n【设计要求】\n1. 导入要激发兴趣、联系已有知识，时长为1-3分钟\n2. 讲解要分解难点、突出重点\n3. 活动要互动性强、巩固知识\n4. 总结要提炼要点、布置作业，时长大概3分钟\n\n【参考信息】\n教学目标：\n{objectives}\n{unit_part}\n\n教学重点：\n{key_points}\n\n教学难点：  \n{difficult_points}\n\n【内容要求】\n1. 教学流程要贴近医学生的数据处理场景，结合真实的医学数据案例（如临床数据清洗、医学统计分析、生物信息学数据处理等）\n2. 如果相关知识点为空，请首先明确列出本课程可能涉及的3-5个医学数据处理相关知识点，然后再设计教学流程\n3. 重要：如果{duration}分钟的教学时长不足以覆盖所有相关知识点，请优先选择最核心、最重要的知识点进行详细讲解，对非核心知识点可以适当取舍或简要提及，确保在有限时间内学生能够真正掌握关键内容。\n\n请按时间顺序详细描述每个环节的教学活动，流程内容无需出现“课程名称"、"教学流程设计"或“课程结束”等字样。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
@@ -130,7 +148,13 @@ def tongyi_generate_content(theme, duration, objectives, key_points, difficult_p
 
 # 涉及思政融入点
 def tongyi_generate_ideological(theme, duration, objectives, key_points, difficult_points, content, unit_name, remark):
-    prompt = f"""结合以下教学信息：
+    unit_name_display = unit_name.strip()
+    if unit_name_display:
+        unit_part = f"相关知识点：\n{unit_name_display}"
+    else:
+        unit_part = "相关知识点：（请根据课程主题，明确输出本课程可能涉及的3-5个医学数据处理相关知识点）"
+    
+    prompt = f"""请作为医学数据处理教学专家，结合以下教学信息：
         主题：{theme}
         教学目标：
         {objectives}
@@ -138,12 +162,14 @@ def tongyi_generate_ideological(theme, duration, objectives, key_points, difficu
         教学内容：
         {content}
         
+        {unit_part}
+        
         请根据教学目标和教学内容设计课程思政融入点，要求：
         1. 包含：
-           - 思政元素（如工匠精神、创新意识等）
+           - 思政元素（如医学伦理、数据安全、严谨的科学态度、创新意识等）
            - 具体融入方式（如案例、讨论等）
            - 预期育人效果
-        2. 自然衔接专业内容
+        2. 自然衔接医学数据处理专业内容，结合真实的医学数据场景（如临床数据保护、医学研究伦理、公共卫生数据分析等）
         
         示例：
         1. **名称**：以科学分类为基，育生态责任之思  
@@ -166,6 +192,9 @@ def tongyi_generate_ideological(theme, duration, objectives, key_points, difficu
             (3) 在总结环节中，教师强调植物多样性是大自然赋予人类的宝贵财富，呼吁学生从自身做起，关注生态环境，践行绿色发展理念。  
         - **教学效果预期**:  
         学生能够理解科学分类不仅是知识学习的一部分，更是实现人与自然和谐共生的重要基础。通过本节课的学习，增强学生的生态责任意识，激发他们对自然科学的兴趣与热爱，培养其尊重自然、保护环境的自觉行动力。
+        
+        【内容要求】
+        1. 如果相关知识点为空，请首先明确列出本课程可能涉及的3-5个医学数据处理相关知识点，然后再设计思政融入点
         
         请直接返回思政点内容。"""
     data = {
@@ -197,7 +226,7 @@ def tongyi_generate_ideological(theme, duration, objectives, key_points, difficu
 
 # 省查
 def tongyi_generate_reflection(theme, duration, objectives, key_points, difficult_points, content, ideological_points):
-    prompt = f"""请作为教学教研专家，分析如下教案内容，判断其中可能存在的问题、不足或改进空间，并给出具体的教学反思建议，要求：\n1. 先简要指出教案中存在的主要问题或不足（如目标不清、重难点不突出、内容不连贯、思政点不自然等）；\n2. 针对每个问题给出详细的反思和改进建议；\n3. 语言简明、条理清晰，适合教师自我提升。\n\n【教案信息】\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n教学重点：\n{key_points}\n教学难点：\n{difficult_points}\n课程内容：\n{content}\n思政点：\n{ideological_points}\n\n请直接返回反思内容，不要包含其他说明。"""
+    prompt = f"""请作为医学数据处理教学教研专家，分析如下教案内容，判断其中可能存在的问题、不足或改进空间，并给出具体的教学反思建议，要求：\n1. 先简要指出教案中存在的主要问题或不足（如目标不清、重难点不突出、内容不连贯、思政点不自然等）；\n2. 针对每个问题给出详细的反思和改进建议；\n3. 语言简明、条理清晰，适合教师自我提升；\n4. 重点关注医学数据处理相关内容的专业性和实践性，确保教案符合医学生的学习需求。\n\n【教案信息】\n课程主题：{theme}\n课时：{duration}分钟\n教学目标：\n{objectives}\n教学重点：\n{key_points}\n教学难点：\n{difficult_points}\n课程内容：\n{content}\n思政点：\n{ideological_points}\n\n请直接返回反思内容，不要包含其他说明。"""
     data = {
         "model": "deepseek-chat",
         "messages": [
