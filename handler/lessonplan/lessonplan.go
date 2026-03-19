@@ -143,6 +143,36 @@ func UpdateLessonPlan(c *gin.Context) {
 		})
 		return
 	}
+
+	// 如果 publish_status 为 1，同步修改学生侧教案
+	if lp.PublishStatus == 1 {
+		lps, err := service.GetLessonPlanStudentByFatherId(c, lp.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+				"err":     err.Error(),
+			})
+			return
+		}
+		lps.Title = lp.Title
+		lps.Duration = lp.Duration
+		lps.Objectives = lp.Objectives
+		lps.KeyPoints = lp.KeyPoints
+		lps.DifficultPoints = lp.DifficultPoints
+		lps.Content = lp.Content
+		lps.IdeologicalPoints = lp.IdeologicalPoints
+		lps.UnitIds = lp.UnitIds
+
+		err = service.UpdateLessonPlanStudent(c, lps)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "请求失败",
+				"err":     err.Error(),
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "请求成功",
 	})

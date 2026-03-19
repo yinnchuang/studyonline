@@ -65,6 +65,15 @@ func RemoveLessonPlanStudent(ctx context.Context, fatherId uint) error {
 	return nil
 }
 
+func GetLessonPlanStudentByFatherId(ctx context.Context, fatherId uint) (*entity.LessonPlanStudent, error) {
+	var lp *entity.LessonPlanStudent
+	err := mysql.DB.Where("father_id = ?", fatherId).First(&lp).Error
+	if err != nil {
+		return nil, err
+	}
+	return lp, nil
+}
+
 func UpdateLessonPlanStudent(ctx context.Context, lp *entity.LessonPlanStudent) error {
 	err := mysql.DB.Where("id = ?", lp.ID).Updates(lp).Error
 	if err != nil {
