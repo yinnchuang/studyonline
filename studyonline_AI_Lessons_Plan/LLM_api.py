@@ -34,7 +34,6 @@ def tongyi_generate_objectives(theme, duration):
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)  # 重试前等待1秒
-            return None
     return None
 
 
@@ -70,7 +69,6 @@ def tongyi_generate_key(theme, duration, objectives, unit_name, remark):
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)  # 重试前等待1秒
-            return None
     return None
 
 
@@ -106,7 +104,6 @@ def tongyi_generate_difficult(theme, duration, objectives, unit_name, remark):
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)  # 重试前等待1秒
-            return None
     return None
 
 
@@ -142,7 +139,6 @@ def tongyi_generate_content(theme, duration, objectives, key_points, difficult_p
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)  # 重试前等待1秒
-            return None
     return None
 
 
@@ -220,7 +216,6 @@ def tongyi_generate_ideological(theme, duration, objectives, key_points, difficu
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)  # 重试前等待1秒
-            return None
     return None
 
 
@@ -250,5 +245,4 @@ def tongyi_generate_reflection(theme, duration, objectives, key_points, difficul
             if attempt == max_retries - 1:
                 return f"【API调用失败：{e}】"
             time.sleep(1)
-            return None
     return None
