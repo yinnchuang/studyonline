@@ -47,5 +47,6 @@ func Init() {
 	db.AutoMigrate(&entity.LessonPlan{})
 	db.AutoMigrate(&entity.LessonPlanStudent{})
 	db.AutoMigrate(&entity.LessonPlanDiscuss{})
+	db.AutoMigrate(&entity.LessonPlanDiscussLike{})
 	DB = db
 }

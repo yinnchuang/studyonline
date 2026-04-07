@@ -135,3 +135,30 @@ func RemoveLessonPlanDiscuss(c *gin.Context) {
 		return
 	}
 }
+
+type LikeLessonPlanDiscussDTO struct {
+	DiscussID uint `json:"discuss_id"`
+}
+
+func LikeLessonPlanDiscuss(c *gin.Context) {
+	likeLessonPlanDiscussDTO := LikeLessonPlanDiscussDTO{}
+	err := c.ShouldBindBodyWithJSON(&likeLessonPlanDiscussDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	userId := c.GetUint("userId")
+	identity := c.GetInt("identity")
+	err = service.LikeLessonPlanDiscuss(c, likeLessonPlanDiscussDTO.DiscussID, userId, identity)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "请求成功",
+	})
+}

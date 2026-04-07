@@ -9,4 +9,5 @@ type LessonPlanDiscuss struct {
 	Identity     int    `json:"identity"`
 	FatherID     uint   `json:"father_id"` // 父讨论id
 	Content      string `json:"content"`
+	LikeCount    int    `json:"like_count"` // 点赞数
 }
