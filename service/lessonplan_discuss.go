@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"studyonline/config"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 	"time"
@@ -91,11 +92,11 @@ func GetLessonPlanDiscussLikeStatus(c context.Context, discussID, userID uint, i
 }
 
 func GetLessonPlanDiscussSummary(c context.Context, content string) (string, error) {
-	apiKey := "sk-c1140274e15a46e597ca1c8c75a22d7b"
-	url := "https://api.deepseek.com/v1/chat/completions"
+	apiKey := config.AppConfig.Deepseek.APIKey
+	url := config.AppConfig.Deepseek.URL
 	
 	reqBody := map[string]interface{}{
-		"model": "deepseek-chat",
+		"model": config.AppConfig.Deepseek.Model,
 		"messages": []map[string]string{
 			{
 				"role":    "system",

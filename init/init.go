@@ -3,6 +3,7 @@ package init
 import (
 	"context"
 	"log"
+	"studyonline/config"
 	"studyonline/service"
 	"studyonline/util"
 
@@ -31,5 +32,8 @@ func Init() {
 	mysql.Init()
 	redis.Init()
 	mylog.Init()
+	if err := config.LoadConfig(); err != nil {
+		log.Fatal("Fail to load config: ", err)
+	}
 	adminInit()
 }
