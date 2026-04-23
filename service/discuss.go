@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"studyonline/constant"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetDiscuss(c *gin.Context, id uint) (*entity.Discuss, error) {
@@ -27,8 +29,24 @@ func GetAllDiscusses(c context.Context) ([]entity.Discuss, error) {
 }
 
 func CreateDiscuss(c context.Context, discuss entity.Discuss) error {
-	err := mysql.DB.Model(&entity.Discuss{}).Create(&discuss).Error
-	return err
+	// 开启事务
+	tx := mysql.DB.Begin()
+	
+	// 创建讨论
+	if err := tx.Model(&entity.Discuss{}).Create(&discuss).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	
+	// 如果是学生用户，增加评论数
+	if discuss.Identity == constant.StudentIdentity {
+		if err := tx.Model(&entity.Student{}).Where("id = ?", discuss.UserId).Update("comment_count", gorm.Expr("COALESCE(comment_count, 0) + ?", 1)).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	
+	return tx.Commit().Error
 }
 
 func RemoveDiscuss(c context.Context, id uint) error {

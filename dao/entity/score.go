@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Score struct {
 	gorm.Model
-	StudentId  uint `json:"student_id" gorm:"not null"`
-	UsualScore int  `json:"usual_score" gorm:"not null"`
-	ExamScore  int  `json:"exam_score" gorm:"not null"`
-	FinalScore int  `json:"final_score" gorm:"not null"`
+	StudentId     uint `json:"student_id" gorm:"not null"`
+	UsualScore    int  `json:"usual_score" gorm:"not null"`
+	ExamScore     int  `json:"exam_score" gorm:"not null"`
+	FinalScore    int  `json:"final_score" gorm:"not null"`
+	ActivityScore int  `json:"activity_score" gorm:"default:0"` // 活跃度分数
 }
