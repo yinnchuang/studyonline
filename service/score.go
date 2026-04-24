@@ -27,50 +27,63 @@ func GetAllScore(c context.Context) ([]entity.Score, error) {
 func CreateScore(c context.Context, score entity.Score) error {
 	// 开启事务
 	tx := mysql.DB.Begin()
-	
+
 	// 获取学生的活跃指标
 	var student entity.Student
+	var activityScore int = 0
 	if err := tx.Where("id = ?", score.StudentId).First(&student).Error; err == nil {
 		// 计算活跃度分数（三个活跃指标的总和*10，最高100）
 		total := student.CommentCount + student.LikeCount + student.BeCommentedCount
-		activityScore := total * 10
+		activityScore = total * 10
 		if activityScore > 100 {
 			activityScore = 100
 		}
-		score.ActivityScore = activityScore
 	}
-	
+
 	// 创建分数记录
-	if err := tx.Model(&entity.Score{}).Create(&score).Error; err != nil {
+	createData := entity.Score{
+		StudentId:     score.StudentId,
+		UsualScore:    score.UsualScore,
+		ExamScore:     score.ExamScore,
+		ActivityScore: activityScore,
+	}
+
+	if err := tx.Model(&entity.Score{}).Create(&createData).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
-	
+
 	return tx.Commit().Error
 }
 
 func UpdateScore(c context.Context, score entity.Score) error {
 	// 开启事务
 	tx := mysql.DB.Begin()
-	
+
 	// 获取学生的活跃指标
 	var student entity.Student
+	var activityScore int = 0
 	if err := tx.Where("id = ?", score.StudentId).First(&student).Error; err == nil {
 		// 计算活跃度分数（三个活跃指标的总和*10，最高100）
 		total := student.CommentCount + student.LikeCount + student.BeCommentedCount
-		activityScore := total * 10
+		activityScore = total * 10
 		if activityScore > 100 {
 			activityScore = 100
 		}
-		score.ActivityScore = activityScore
 	}
-	
-	// 更新分数记录
-	if err := tx.Model(&entity.Score{}).Where("student_id = ?", score.StudentId).Updates(&score).Error; err != nil {
+
+	// 更新分数记录，只更新必要的字段
+	updateData := map[string]interface{}{
+		"usual_score":    score.UsualScore,
+		"exam_score":     score.ExamScore,
+		"activity_score": activityScore,
+	}
+
+	if err := tx.Model(&entity.Score{}).Where("student_id = ?", score.StudentId).Updates(updateData).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
-	
+
 	return tx.Commit().Error
 }
 

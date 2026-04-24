@@ -9,13 +9,13 @@ import (
 )
 
 type ScoreVO struct {
-	ID         uint   `json:"id"`
-	Name       string `json:"name"`
-	UserName   string `json:"user_name"`
-	Department string `json:"department"`
-	UsualScore int    `json:"usual_score"`
-	ExamScore  int    `json:"exam_score"`
-	FinalScore int    `json:"final_score"`
+	ID            uint   `json:"id"`
+	Name          string `json:"name"`
+	UserName      string `json:"user_name"`
+	Department    string `json:"department"`
+	UsualScore    int    `json:"usual_score"`
+	ExamScore     int    `json:"exam_score"`
+	ActivityScore int    `json:"activity_score"`
 }
 
 func GetScoreByStudentId(c *gin.Context) {
@@ -35,13 +35,13 @@ func GetScoreByStudentId(c *gin.Context) {
 		return
 	}
 	scoreVO := ScoreVO{
-		ID:         score.ID,
-		Name:       studentInfo.Name,
-		UserName:   studentInfo.Username,
-		Department: studentInfo.Department,
-		UsualScore: score.UsualScore,
-		ExamScore:  score.ExamScore,
-		FinalScore: score.FinalScore,
+		ID:            score.ID,
+		Name:          studentInfo.Name,
+		UserName:      studentInfo.Username,
+		Department:    studentInfo.Department,
+		UsualScore:    score.UsualScore,
+		ExamScore:     score.ExamScore,
+		ActivityScore: score.ActivityScore,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -65,13 +65,13 @@ func GetAllScore(c *gin.Context) {
 			continue
 		}
 		scoreVOs = append(scoreVOs, ScoreVO{
-			ID:         item.ID,
-			Name:       studentInfo.Name,
-			UserName:   studentInfo.Username,
-			Department: studentInfo.Department,
-			UsualScore: item.UsualScore,
-			ExamScore:  item.ExamScore,
-			FinalScore: item.FinalScore,
+			ID:            item.ID,
+			Name:          studentInfo.Name,
+			UserName:      studentInfo.Username,
+			Department:    studentInfo.Department,
+			UsualScore:    item.UsualScore,
+			ExamScore:     item.ExamScore,
+			ActivityScore: item.ActivityScore,
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -82,9 +82,8 @@ func GetAllScore(c *gin.Context) {
 
 type CreateScoreDTO struct {
 	StudentId  uint `json:"student_id"`
-	UsualScore int  `json:"usual_score" gorm:"not null"`
-	ExamScore  int  `json:"exam_score" gorm:"not null"`
-	FinalScore int  `json:"final_score" gorm:"not null"`
+	UsualScore int  `json:"usual_score"`
+	ExamScore  int  `json:"exam_score"`
 }
 
 func CreateScore(c *gin.Context) {
@@ -107,7 +106,6 @@ func CreateScore(c *gin.Context) {
 		StudentId:  createScoreDTO.StudentId,
 		UsualScore: createScoreDTO.UsualScore,
 		ExamScore:  createScoreDTO.ExamScore,
-		FinalScore: createScoreDTO.FinalScore,
 	}
 
 	if exist {
