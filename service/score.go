@@ -31,11 +31,11 @@ func CreateScore(c context.Context, score entity.Score) error {
 	// 获取学生的活跃指标
 	var student entity.Student
 	if err := tx.Where("id = ?", score.StudentId).First(&student).Error; err == nil {
-		// 计算活跃度分数（三个活跃指标的平均值）
+		// 计算活跃度分数（三个活跃指标的总和*10，最高100）
 		total := student.CommentCount + student.LikeCount + student.BeCommentedCount
-		activityScore := 0
-		if total > 0 {
-			activityScore = total / 3
+		activityScore := total * 10
+		if activityScore > 100 {
+			activityScore = 100
 		}
 		score.ActivityScore = activityScore
 	}
@@ -56,11 +56,11 @@ func UpdateScore(c context.Context, score entity.Score) error {
 	// 获取学生的活跃指标
 	var student entity.Student
 	if err := tx.Where("id = ?", score.StudentId).First(&student).Error; err == nil {
-		// 计算活跃度分数（三个活跃指标的平均值）
+		// 计算活跃度分数（三个活跃指标的总和*10，最高100）
 		total := student.CommentCount + student.LikeCount + student.BeCommentedCount
-		activityScore := 0
-		if total > 0 {
-			activityScore = total / 3
+		activityScore := total * 10
+		if activityScore > 100 {
+			activityScore = 100
 		}
 		score.ActivityScore = activityScore
 	}
