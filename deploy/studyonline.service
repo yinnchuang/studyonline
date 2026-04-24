@@ -1,0 +1,25 @@
+[Unit]
+Description=StudyOnline Service
+After=network.target
+
+[Service]
+Type=forking
+User=your_username
+Group=your_group
+# WorkingDirectory 必须使用绝对路径，请修改为实际的项目路径
+WorkingDirectory=/path/to/studyonline
+# ExecStart 和 ExecStop 也建议使用绝对路径
+ExecStart=/path/to/studyonline/deploy/start.sh
+ExecStop=/path/to/studyonline/deploy/stop.sh
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=studyonline
+
+# 环境变量（如果需要）
+# Environment="GOPATH=/path/to/gopath"
+# Environment="PATH=/usr/local/bin:$PATH"
+
+[Install]
+WantedBy=multi-user.target
