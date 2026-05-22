@@ -66,6 +66,8 @@ def generate_lessonplan():
     duration = data.get('duration', '') or ''
     unit_ids = data.get('unit_ids', '')
     unit_name = data.get('unit_names', '') or ''
+    if isinstance(unit_name, list):
+        unit_name = '\n'.join(unit_name)
     remark = data.get('remark', '') or ''
     step = data.get('step', '') or ''
 
