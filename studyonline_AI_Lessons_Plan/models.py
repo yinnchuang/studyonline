@@ -14,3 +14,4 @@ class LessonPlan(db.Model):
     ideological_points = db.Column(db.Text, default='')
     unit_ids = db.Column(db.Text, default='[]')
     publish_status = db.Column(db.Integer, default=0)
+    teacher_id = db.Column(db.Integer, default=0)

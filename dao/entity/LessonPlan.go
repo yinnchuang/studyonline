@@ -11,4 +11,5 @@ type LessonPlan struct {
 	IdeologicalPoints string `json:"ideological_points"`
 	UnitIds           string `json:"unit_ids"`
 	PublishStatus     uint   `json:"publish_status"`
+	TeacherID         uint   `json:"teacher_id" gorm:"default:0"`
 }

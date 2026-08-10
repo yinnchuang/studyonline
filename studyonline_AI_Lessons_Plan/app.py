@@ -70,6 +70,7 @@ def generate_lessonplan():
         unit_name = '\n'.join(unit_name)
     remark = data.get('remark', '') or ''
     step = data.get('step', '') or ''
+    teacher_id = data.get('teacher_id', 0) or 0
 
     try:
         duration_int = int(duration)
@@ -138,6 +139,7 @@ def generate_lessonplan():
             ideological_points=ideological_points,
             unit_ids=json.dumps(unit_ids),
             publish_status=0,
+            teacher_id=int(teacher_id) if teacher_id else 0,
         )
         db.session.add(plan)
         db.session.commit()
