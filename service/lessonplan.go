@@ -6,34 +6,42 @@ import (
 	"studyonline/dao/mysql"
 )
 
-func GetAllLessonPlan() ([]entity.LessonPlan, error) {
+// GetAllLessonPlan 教师端教案列表：已发布的全部教案 + 自己创建的草稿
+func GetAllLessonPlan(teacherID uint) ([]entity.LessonPlan, error) {
 	var res []entity.LessonPlan
-	err := mysql.DB.Model(&entity.LessonPlan{}).Find(&res).Error
+	err := mysql.DB.Model(&entity.LessonPlan{}).
+		Where("publish_status = 1 OR teacher_id = ?", teacherID).
+		Find(&res).Error
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func RemoveLessonPlan(ctx context.Context, id uint) error {
-	err := mysql.DB.Where("id = ?", id).Delete(&entity.LessonPlan{}).Error
+// RemoveLessonPlan 仅允许删除自己创建的教案
+func RemoveLessonPlan(ctx context.Context, id uint, teacherID uint) error {
+	err := mysql.DB.Where("id = ? AND teacher_id = ?", id, teacherID).Delete(&entity.LessonPlan{}).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateLessonPlan(ctx context.Context, id uint, lp *entity.LessonPlan) error {
-	err := mysql.DB.Model(&entity.LessonPlan{}).Where("id = ?", id).Updates(lp).Error
+// UpdateLessonPlan 仅允许修改自己创建的教案
+func UpdateLessonPlan(ctx context.Context, id uint, teacherID uint, lp *entity.LessonPlan) error {
+	err := mysql.DB.Model(&entity.LessonPlan{}).
+		Where("id = ? AND teacher_id = ?", id, teacherID).
+		Updates(lp).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetLessonPlanById(ctx context.Context, id uint) (*entity.LessonPlan, error) {
+// GetLessonPlanById 根据ID获取教案（需校验所有权）
+func GetLessonPlanById(ctx context.Context, id uint, teacherID uint) (*entity.LessonPlan, error) {
 	var lp *entity.LessonPlan
-	err := mysql.DB.Where("id = ?", id).First(&lp).Error
+	err := mysql.DB.Where("id = ? AND teacher_id = ?", id, teacherID).First(&lp).Error
 	if err != nil {
 		return nil, err
 	}

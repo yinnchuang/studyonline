@@ -42,6 +42,9 @@ func GenerateLessonPlan(c *gin.Context) {
 	}
 
 	data["unit_names"] = unitNames
+	// 注入当前教师的 teacher_id
+	teacherID, _ := c.Get("userId")
+	data["teacher_id"] = teacherID
 
 	// 重新编码
 	newBody, _ := json.Marshal(data)
@@ -56,7 +59,8 @@ func GenerateLessonPlan(c *gin.Context) {
 }
 
 func GetAllLessonPlan(c *gin.Context) {
-	lessonPlans, err := service.GetAllLessonPlan()
+	teacherID, _ := c.Get("userId")
+	lessonPlans, err := service.GetAllLessonPlan(teacherID.(uint))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -74,6 +78,7 @@ type RemoveLessonPlanDTO struct {
 }
 
 func RemoveLessonPlan(c *gin.Context) {
+	teacherID, _ := c.Get("userId")
 	removeLessonPlanDTO := RemoveLessonPlanDTO{}
 	err := c.ShouldBindBodyWithJSON(&removeLessonPlanDTO)
 	if err != nil {
@@ -82,7 +87,7 @@ func RemoveLessonPlan(c *gin.Context) {
 		})
 		return
 	}
-	err = service.RemoveLessonPlan(c, removeLessonPlanDTO.LessonPlanId)
+	err = service.RemoveLessonPlan(c, removeLessonPlanDTO.LessonPlanId, teacherID.(uint))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -111,6 +116,7 @@ type UpdateLessonPlanDTO struct {
 }
 
 func UpdateLessonPlan(c *gin.Context) {
+	teacherID, _ := c.Get("userId")
 	updateLessonPlanDTO := UpdateLessonPlanDTO{}
 	err := c.ShouldBindBodyWithJSON(&updateLessonPlanDTO)
 	if err != nil {
@@ -120,10 +126,10 @@ func UpdateLessonPlan(c *gin.Context) {
 		})
 		return
 	}
-	lp, err := service.GetLessonPlanById(c, updateLessonPlanDTO.ID)
+	lp, err := service.GetLessonPlanById(c, updateLessonPlanDTO.ID, teacherID.(uint))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
+			"message": "请求失败，您不是该教案的创建者",
 			"err":     err.Error(),
 		})
 		return
@@ -135,7 +141,7 @@ func UpdateLessonPlan(c *gin.Context) {
 	lp.Content = updateLessonPlanDTO.Content
 	lp.IdeologicalPoints = updateLessonPlanDTO.IdeologicalPoints
 
-	err = service.UpdateLessonPlan(c, lp.ID, lp)
+	err = service.UpdateLessonPlan(c, lp.ID, teacherID.(uint), lp)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "请求失败",
@@ -183,6 +189,7 @@ type PublishLessonPlanDTO struct {
 }
 
 func PublishLessonPlan(c *gin.Context) {
+	teacherID, _ := c.Get("userId")
 	publishLessonPlanDTO := PublishLessonPlanDTO{}
 	err := c.ShouldBindBodyWithJSON(&publishLessonPlanDTO)
 	if err != nil {
@@ -192,10 +199,10 @@ func PublishLessonPlan(c *gin.Context) {
 		})
 		return
 	}
-	lp, err := service.GetLessonPlanById(c, publishLessonPlanDTO.ID)
+	lp, err := service.GetLessonPlanById(c, publishLessonPlanDTO.ID, teacherID.(uint))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "请求失败",
+			"message": "请求失败，您不是该教案的创建者",
 			"err":     err.Error(),
 		})
 		return
@@ -204,7 +211,7 @@ func PublishLessonPlan(c *gin.Context) {
 	if lp.PublishStatus == 0 {
 		// 更新数据
 		lp.PublishStatus = 1
-		err = service.UpdateLessonPlan(c, lp.ID, lp)
+		err = service.UpdateLessonPlan(c, lp.ID, teacherID.(uint), lp)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "请求失败",
