@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
 )
@@ -20,9 +21,13 @@ func GetAllLessonPlan(teacherID uint) ([]entity.LessonPlan, error) {
 
 // RemoveLessonPlan 仅允许删除自己创建的教案
 func RemoveLessonPlan(ctx context.Context, id uint, teacherID uint) error {
-	err := mysql.DB.Where("id = ? AND teacher_id = ?", id, teacherID).Delete(&entity.LessonPlan{}).Error
-	if err != nil {
-		return err
+	result := mysql.DB.Where("id = ? AND teacher_id = ?", id, teacherID).Delete(&entity.LessonPlan{})
+	if result.Error != nil {
+		return result.Error
+	}
+	// 匹配不到任何行说明教案不存在或非创建者，返回错误阻止后续删除学生侧数据
+	if result.RowsAffected == 0 {
+		return errors.New("教案不存在或非创建者，无法删除")
 	}
 	return nil
 }
