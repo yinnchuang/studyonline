@@ -87,6 +87,14 @@ func RemoveLessonPlan(c *gin.Context) {
 		})
 		return
 	}
+	// 删除前校验所有权，防止跨教师删除
+	if _, err := service.GetLessonPlanById(c, removeLessonPlanDTO.LessonPlanId, teacherID.(uint)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "请求失败，您不是该教案的创建者",
+			"err":     err.Error(),
+		})
+		return
+	}
 	err = service.RemoveLessonPlan(c, removeLessonPlanDTO.LessonPlanId, teacherID.(uint))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
