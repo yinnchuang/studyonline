@@ -28,16 +28,20 @@ func GetUserInfo(userId uint, identity int) (*GetUserInfoVO, error) {
 }
 
 func GetStudentInfo(id uint) (*GetUserInfoVO, error) {
-	var result GetUserInfoVO
-	res := mysql.DB.Model(&entity.Student{}).Where("id = ?", id).Find(&result)
+	var student entity.Student
+	res := mysql.DB.Model(&entity.Student{}).Where("id = ?", id).Find(&student)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}
-	result.StudentID = id
-	return &result, nil
+	return &GetUserInfoVO{
+		Name:       student.Name,
+		Username:   student.Username,
+		Department: student.Department,
+		StudentID:  student.ID,
+	}, nil
 }
 
 func GetStudentInfoByUsername(username string) (*entity.Student, error) {
@@ -53,16 +57,20 @@ func GetStudentInfoByUsername(username string) (*entity.Student, error) {
 }
 
 func GetTeacherInfo(id uint) (*GetUserInfoVO, error) {
-	var result GetUserInfoVO
-	res := mysql.DB.Model(&entity.Teacher{}).Where("id = ?", id).Find(&result)
+	var teacher entity.Teacher
+	res := mysql.DB.Model(&entity.Teacher{}).Where("id = ?", id).Find(&teacher)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}
-	result.TeacherID = id
-	return &result, nil
+	return &GetUserInfoVO{
+		Name:       teacher.Name,
+		Username:   teacher.Username,
+		Department: teacher.Department,
+		TeacherID:  teacher.ID,
+	}, nil
 }
 
 func GetTeacherInfoByUsername(username string) (*entity.Teacher, error) {
