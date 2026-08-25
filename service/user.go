@@ -14,6 +14,8 @@ type GetUserInfoVO struct {
 	Name       string `json:"name"`
 	Username   string `json:"username"`
 	Department string `json:"department"`
+	TeacherID  uint   `json:"teacher_id,omitempty"`
+	StudentID  uint   `json:"student_id,omitempty"`
 }
 
 func GetUserInfo(userId uint, identity int) (*GetUserInfoVO, error) {
@@ -34,6 +36,7 @@ func GetStudentInfo(id uint) (*GetUserInfoVO, error) {
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}
+	result.StudentID = id
 	return &result, nil
 }
 
@@ -58,6 +61,7 @@ func GetTeacherInfo(id uint) (*GetUserInfoVO, error) {
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}
+	result.TeacherID = id
 	return &result, nil
 }
 
