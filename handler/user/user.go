@@ -241,6 +241,12 @@ func ChangePasswordByEmailStudent(c *gin.Context) {
 		})
 		return
 	}
+	if !util.IsValidEmail(student.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "未绑定邮箱或邮箱无效",
+		})
+		return
+	}
 	code := redis.RDB.Get(c, student.Email).Val()
 	if code != changePasswordByEmailDTO.Code {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -279,6 +285,12 @@ func ChangePasswordByEmailTeacher(c *gin.Context) {
 	if err != nil || teacher == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "用户不存在",
+		})
+		return
+	}
+	if !util.IsValidEmail(teacher.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "未绑定邮箱或邮箱无效",
 		})
 		return
 	}
