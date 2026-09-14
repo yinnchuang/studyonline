@@ -9,6 +9,7 @@ import (
 	"studyonline/constant"
 	"studyonline/log"
 	"studyonline/service"
+	"studyonline/util"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -396,6 +397,19 @@ func UpdateDataset(c *gin.Context) {
 			"message": "请求失败",
 		})
 		return
+	}
+
+	// 更新成功后清理被替换掉的旧文件，避免磁盘残留
+	oldPaths := make([]string, 0, 2)
+	if dataset.FilePath != filePath {
+		oldPaths = append(oldPaths, dataset.FilePath)
+	}
+	if dataset.CoverPath != coverPath {
+		oldPaths = append(oldPaths, dataset.CoverPath)
+	}
+	if err := util.RemoveStaticFiles(oldPaths...); err != nil {
+		log.CommonLogger.Log(fmt.Sprintf("remove replaced dataset(%d) files failed: %v",
+			*updateDatasetDTO.DatasetID, err))
 	}
 
 	c.JSON(http.StatusOK, gin.H{

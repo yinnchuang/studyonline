@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strconv"
 	"studyonline/constant"
+	"studyonline/log"
 	"studyonline/service"
+	"studyonline/util"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -279,6 +281,19 @@ func UpdateResource(c *gin.Context) {
 			"message": "请求失败",
 		})
 		return
+	}
+
+	// 6. 更新成功后清理被替换掉的旧文件，避免磁盘残留
+	oldPaths := make([]string, 0, 2)
+	if resource.FilePath != filePath {
+		oldPaths = append(oldPaths, resource.FilePath)
+	}
+	if resource.CoverPath != coverPath {
+		oldPaths = append(oldPaths, resource.CoverPath)
+	}
+	if err := util.RemoveStaticFiles(oldPaths...); err != nil {
+		log.CommonLogger.Log(fmt.Sprintf("remove replaced resource(%d) files failed: %v",
+			*updateResourceDTO.ResourceId, err))
 	}
 
 	c.JSON(http.StatusOK, gin.H{

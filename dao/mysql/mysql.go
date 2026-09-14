@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"fmt"
-	"log"
 	"studyonline/dao/entity"
 
 	"gopkg.in/ini.v1"
@@ -12,10 +11,12 @@ import (
 
 var DB *gorm.DB
 
-func Init() {
+// Open 依据 ./init/project.ini 建立数据库连接，不做任何表结构变更。
+// 运维脚本（如孤儿文件清理）应使用它，避免触发 AutoMigrate 的 DDL。
+func Open() (*gorm.DB, error) {
 	cfg, err := ini.Load("./init/project.ini")
 	if err != nil {
-		log.Fatal("Fail to read file: ", err)
+		return nil, fmt.Errorf("read config failed: %w", err)
 	}
 	user := cfg.Section("mysql").Key("user").String()
 	password := cfg.Section("mysql").Key("password").String()
@@ -26,9 +27,13 @@ func Init() {
 	// dsn := "user:123456@tcp(127.0.0.1:3306)/studyonline?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, database)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
+}
+
+func Init() {
+	db, err := Open()
 	if err != nil {
-		panic("failed to connect database")
+		panic("failed to connect database: " + err.Error())
 	}
 	// Migrate the schema
 	db.AutoMigrate(&entity.Admin{})

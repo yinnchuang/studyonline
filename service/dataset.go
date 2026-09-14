@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+	"studyonline/log"
+	"studyonline/util"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -114,7 +117,18 @@ func PlusDatasetDownloadTime(ctx context.Context, datasetId uint) {
 }
 
 func DeleteDataset(ctx context.Context, id uint) error {
-	return mysql.DB.Delete(&entity.Dataset{}, id).Error
+	var dataset entity.Dataset
+	if err := mysql.DB.First(&dataset, id).Error; err != nil {
+		return err
+	}
+	if err := mysql.DB.Delete(&entity.Dataset{}, id).Error; err != nil {
+		return err
+	}
+	// 数据库为软删除，磁盘文件需显式清理；清理失败只记日志，不回滚已删除的记录
+	if err := util.RemoveStaticFiles(dataset.FilePath, dataset.CoverPath); err != nil {
+		log.CommonLogger.Log(fmt.Sprintf("delete dataset(%d) files failed: %v", id, err))
+	}
+	return nil
 }
 
 // SearchDatasetByKeyword 根据关键词搜索数据集（匹配名称或描述）

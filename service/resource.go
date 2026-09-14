@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"studyonline/dao/entity"
 	"studyonline/dao/mysql"
+	"studyonline/log"
+	"studyonline/util"
 
 	"gorm.io/gorm"
 )
@@ -169,7 +172,18 @@ func PlusResourceDownloadTime(ctx context.Context, resourceId uint) error {
 }
 
 func DeleteResource(ctx context.Context, id uint) error {
-	return mysql.DB.Delete(&entity.Resource{}, id).Error
+	var resource entity.Resource
+	if err := mysql.DB.First(&resource, id).Error; err != nil {
+		return err
+	}
+	if err := mysql.DB.Delete(&entity.Resource{}, id).Error; err != nil {
+		return err
+	}
+	// 数据库为软删除，磁盘文件需显式清理；清理失败只记日志，不回滚已删除的记录
+	if err := util.RemoveStaticFiles(resource.FilePath, resource.CoverPath); err != nil {
+		log.CommonLogger.Log(fmt.Sprintf("delete resource(%d) files failed: %v", id, err))
+	}
+	return nil
 }
 
 func SearchResourceByKeyword(ctx context.Context, limit int, offset int, keyword string) ([]entity.Resource, error) {
