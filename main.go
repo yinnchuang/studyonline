@@ -6,6 +6,7 @@ import (
 	"studyonline/handler/comment"
 	"studyonline/handler/dataset"
 	"studyonline/handler/discuss"
+	"studyonline/handler/download"
 	"studyonline/handler/homework"
 	"studyonline/handler/lessonplan"
 	"studyonline/handler/lessonplan_discuss"
@@ -209,6 +210,20 @@ func main() {
 		v14.POST("/like", middleware.Auth(constant.CommonIdentity), lessonplan_discuss.LikeLessonPlanDiscuss)
 		v14.POST("/summary", middleware.Auth(constant.TeacherIdentity), lessonplan_discuss.GetSummary)
 
+	}
+	// 下载（票据模式：token 换短时效票据，票据走 URL，让浏览器原生下载器接管）
+	// 旧的 /resource/file、/dataset/file、/homework/file 保持不变
+	v15 := r.Group("/download")
+	{
+		// 凭 token 换取下载票据
+		v15.POST("/resource/ticket", middleware.Auth(constant.CommonIdentity), download.CreateResourceTicket)
+		v15.POST("/dataset/ticket", middleware.Auth(constant.CommonIdentity), download.CreateDatasetTicket)
+		v15.POST("/homework/ticket", middleware.Auth(constant.CommonIdentity), download.CreateHomeworkTicket)
+
+		// 凭票据下载，不校验 Authorization 头
+		v15.GET("/resource", download.DownloadResource)
+		v15.GET("/dataset", download.DownloadDataset)
+		v15.GET("/homework", download.DownloadHomework)
 	}
 	// 静态资源
 	// r.Static("/static", "./static") // 废弃
