@@ -64,6 +64,10 @@ func IsValidEmail(email string) bool {
 func SendCodeToEmail(email string, code string) error {
 	smtpConfig := config.AppConfig.SMTP
 
+	// 打印配置用于调试（隐藏密码）
+	log.Printf("SMTP Config - Server: %s, Port: %s, User: %s, PasswordLen: %d",
+		smtpConfig.Server, smtpConfig.Port, smtpConfig.User, len(smtpConfig.Password))
+
 	// 邮件内容
 	from := smtpConfig.User
 	to := []string{email} // 收件人邮箱地址
