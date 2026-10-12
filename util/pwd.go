@@ -7,6 +7,7 @@ import (
 	"regexp"
 
 	"golang.org/x/crypto/bcrypt"
+	"studyonline/config"
 )
 
 // GetPwd 给密码加密
@@ -60,16 +61,11 @@ func IsValidEmail(email string) bool {
 	return ok
 }
 
-var (
-	smtpServer   = "smtp.imicams.ac.cn" // SMTP 服务器地址
-	smtpPort     = "25"                 // SMTP 服务器端口号
-	smtpUser     = "zsgc@imicams.ac.cn" // 发件人邮箱地址
-	smtpPassword = "Znyx#25117"         // 发件人邮箱密码
-)
-
 func SendCodeToEmail(email string, code string) error {
+	smtpConfig := config.AppConfig.SMTP
+
 	// 邮件内容
-	from := smtpUser
+	from := smtpConfig.User
 	to := []string{email} // 收件人邮箱地址
 	subject := "找回密码验证码"
 	body := "本次验证码为：" + code + "\n" + "验证码有效时长5分钟"
@@ -78,8 +74,8 @@ func SendCodeToEmail(email string, code string) error {
 	message := fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to[0], subject, body)
 
 	// 连接到 SMTP 服务器
-	auth := smtp.PlainAuth("", smtpUser, smtpPassword, smtpServer)
-	err := smtp.SendMail(smtpServer+":"+smtpPort, auth, from, to, []byte(message))
+	auth := smtp.PlainAuth("", smtpConfig.User, smtpConfig.Password, smtpConfig.Server)
+	err := smtp.SendMail(smtpConfig.Server+":"+smtpConfig.Port, auth, from, to, []byte(message))
 	if err != nil {
 		log.Printf("Error sending email: %s\n", err)
 		return err
